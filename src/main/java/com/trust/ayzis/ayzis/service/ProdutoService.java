@@ -82,6 +82,7 @@ public class ProdutoService implements IProdutoService {
             produto.setPeso(newProduto.getPeso());
             produto.setUnidade(newProduto.getUnidade());
             produto.setProdutosComposicao(newProduto.getProdutosComposicao());
+            
             return produtoRepository.save(produto);
         });
     }

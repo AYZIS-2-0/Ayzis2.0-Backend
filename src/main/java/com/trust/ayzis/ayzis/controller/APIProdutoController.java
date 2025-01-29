@@ -38,6 +38,7 @@ public class APIProdutoController {
 
     @CrossOrigin
     @GetMapping("/produtos")
+    @Transactional
     public ResponseEntity<Object> buscarTodos() {
         logger.info("Buscando todos os produtos");
 

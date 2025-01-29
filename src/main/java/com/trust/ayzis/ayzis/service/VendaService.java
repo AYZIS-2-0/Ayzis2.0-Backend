@@ -75,16 +75,21 @@ public class VendaService implements IVendaService {
 
         return vendaRepository.findById(newVenda.getId()).map(venda -> {
             venda.setDataVenda(newVenda.getDataVenda());
-            venda.setProduto(newVenda.getProduto());
             venda.setStatus(newVenda.getStatus());
+            venda.setDescStatus(newVenda.getDescStatus());
+            venda.setQuantidade(newVenda.getQuantidade());
+            venda.setValorTotal(newVenda.getValorTotal());
+            venda.setProduto(newVenda.getProduto());
+            
             return vendaRepository.save(venda);
         });
     }
 
     @Override
     public void deletarPorId(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deletarPorId'");
+        logger.info("Deletando venda por id: " + id);
+
+        vendaRepository.deleteById(id);
     }
 
 }
