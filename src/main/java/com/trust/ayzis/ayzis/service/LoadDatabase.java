@@ -6,12 +6,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
 import com.trust.ayzis.ayzis.model.IProudutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.ProdutoComposicao;
+import com.trust.ayzis.ayzis.model.Venda;
 
 @Configuration
 public class LoadDatabase {
@@ -26,10 +28,20 @@ public class LoadDatabase {
             Produto produto2 = new Produto("772041NOVA","BANDEJA NOVA DIANTEIRA ESQUERDA HILUX 2005 A 2015 COM PIVÔ", null, "FORTIKIT", "Produto", "Novo",664.58, 20.0, 10.0, 20.0, 350, "Unidade", false, null);
             Produto produto3 = new Produto("772040/41NOVA", "PAR BANDEJA NOVA DIANTEIRA HILUX 2005 A 2015 COM PIVÔ",
                     null, "FORTIKIT", "Produto", "Novo", 1169.23, 20.0, 10.0, 20.0, 700.0, "Par", false, null);
+
+            Venda venda1 = new Venda("1", Date.valueOf("2021-01-01"), "Pendente", "Venda pendente", 1, 664.58, produto1);
+            Venda venda2 = new Venda("2", Date.valueOf("2021-02-01"), "Pendente", "Venda pendente", 1, 664.58, produto2);
+            Venda venda3 = new Venda("3", Date.valueOf("2021-01-02"), "Pendente", "Venda pendente", 1, 1169.23, produto3);
+            Venda venda4 = new Venda("4", Date.valueOf("2021-02-02"), "Pendente", "Venda pendente", 1, 1169.23, produto3);
+            
             ProdutoComposicao produtoComposicao1 = new ProdutoComposicao(produto3, produto1, 1);
             ProdutoComposicao produtoComposicao2 = new ProdutoComposicao(produto3, produto2, 1);
-
+            
             produto3.setProdutosComposicao(List.of(produtoComposicao1, produtoComposicao2));
+            
+            produto1.setVendas(List.of(venda1));
+            produto2.setVendas(List.of(venda2));
+            produto3.setVendas(List.of(venda3, venda4));
 
             // Verificar se os produtos já existem no banco de dados
             Optional<Produto> existingProduto1 = produtoRepository.findById(produto1.getId());

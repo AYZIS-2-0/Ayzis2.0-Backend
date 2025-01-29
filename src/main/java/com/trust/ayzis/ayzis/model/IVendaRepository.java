@@ -17,6 +17,8 @@ public interface IVendaRepository extends JpaRepository<Venda, String> {
 
     public List<Venda> findByDataVenda(Date dataVenda);
 
+    public List<Venda> findByDataVendaBetween(Date start, Date end);
+
     public List<Venda> findByProduto(Produto produto);
 
     public List<Venda> findByStatus(String status);

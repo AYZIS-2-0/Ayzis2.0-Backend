@@ -3,6 +3,7 @@ package com.trust.ayzis.ayzis.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -32,8 +33,8 @@ public class Produto {
     @JsonManagedReference
     private List<ProdutoComposicao> produtosComposicao;
 
-    @OneToMany(mappedBy = "venda", cascade = { CascadeType.ALL })
-    @JsonBackReference
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Venda> vendas;
 
     public Produto() {
@@ -170,5 +171,13 @@ public class Produto {
     public void setProdutosComposicao(List<ProdutoComposicao> produtosComposicao) {
         this.produtosComposicao = produtosComposicao;
         this.composto = (produtosComposicao != null && !produtosComposicao.isEmpty());
+    }
+
+    public List<Venda> getVendas() {
+        return vendas;
+    }
+
+    public void setVendas(List<Venda> vendas) {
+        this.vendas = vendas;
     }
 }

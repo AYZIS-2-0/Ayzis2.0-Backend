@@ -49,7 +49,7 @@ public class APIProdutoController {
     @GetMapping(value = "produtos", params = "id")
     @Transactional
     public ResponseEntity<Object> buscarPorId(@RequestParam("id") String id) {
-        logger.info("Buscando produto por id: " + id);
+        logger.info("Buscando produto por id");
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarPorId(id));
     }
@@ -58,7 +58,7 @@ public class APIProdutoController {
     @GetMapping(value = "produtos", params = "nome")
     @Transactional
     public ResponseEntity<Object> buscarPorNome(@RequestParam String nome) {
-        logger.info("Buscando produto por nome: " + nome);
+        logger.info("Buscando produto por nome");
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarPorNome(nome));
     }
@@ -78,7 +78,7 @@ public class APIProdutoController {
     @PostMapping("/produtos")
     @Transactional
     public ResponseEntity<Object> salvarProduto(@RequestBody Produto produto) {
-        logger.info("Salvando produto: " + produto);
+        logger.info("Salvando produto");
 
         Optional<Produto> produtoSalvo = produtoServico.salvarProduto(produto);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
@@ -88,7 +88,7 @@ public class APIProdutoController {
     @PatchMapping("/produtos")
     @Transactional
     public ResponseEntity<Object> atualizar(@RequestBody Produto produto) {
-        logger.info("Atualizando produto: " + produto);
+        logger.info("Atualizando produto");
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoServico.atualizarProduto(produto));
     }
@@ -97,7 +97,7 @@ public class APIProdutoController {
     @DeleteMapping("/produtos/deletar")
     @Transactional
     public ResponseEntity<Object> deletarPorId(@RequestParam("id") String id, HttpServletRequest req) {
-        logger.info("Deletando produto por id: " + id);
+        logger.info("Deletando produto por id");
 
         produtoServico.deletarProdutoPorId(id);
 

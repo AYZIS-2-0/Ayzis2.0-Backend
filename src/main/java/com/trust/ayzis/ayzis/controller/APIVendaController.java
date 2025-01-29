@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.model.Venda;
+import com.trust.ayzis.ayzis.service.IProdutoService;
 import com.trust.ayzis.ayzis.service.IVendaService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +39,10 @@ public class APIVendaController {
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Autowired
-    IVendaService vendaServico;
+    IVendaService vendaService;
+
+    @Autowired
+    IProdutoService produtoService;
 
     @CrossOrigin
     @GetMapping("/vendas")
@@ -43,7 +50,7 @@ public class APIVendaController {
     public ResponseEntity<Object> buscarTodos() {
         logger.info("Buscando todas as vendas");
 
-        return ResponseEntity.status(HttpStatus.OK).body(vendaServico.buscarTodasVendas());
+        return ResponseEntity.status(HttpStatus.OK).body(vendaService.buscarTodasVendas());
     }
 
     @CrossOrigin
@@ -52,7 +59,7 @@ public class APIVendaController {
     public ResponseEntity<Object> buscarPorId(@RequestParam String id) {
         logger.info("Buscando venda por id: " + id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(vendaServico.buscarPorId(id));
+        return ResponseEntity.status(HttpStatus.OK).body(vendaService.buscarPorId(id));
     }
 
     @CrossOrigin
@@ -62,10 +69,10 @@ public class APIVendaController {
         logger.info("Buscando venda por data: " + data);
 
         try {
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date utilDate = dateFormat.parse(data);
             Date date = new Date(utilDate.getTime());
-            return ResponseEntity.status(HttpStatus.OK).body(vendaServico.buscarPorData(date));
+            return ResponseEntity.status(HttpStatus.OK).body(vendaService.buscarPorData(date));
         } catch (ParseException e) {
             logger.error("Erro ao converter data: " + data, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Data inválida");
@@ -73,14 +80,31 @@ public class APIVendaController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "vendas", params = "sku")
+    @GetMapping(value = "vendas", params = "mes")
     @Transactional
-    public ResponseEntity<Object> buscarPorProduto(@RequestParam String produto) {
-        logger.info("Buscando venda por produto: " + produto);
+    public ResponseEntity<Object> buscarPorMes(@RequestParam String mes) {
+        logger.info("Buscando venda por mês: " + mes);
 
-        Produto produtoObj = new Produto();
-        produtoObj.setNome(produto);
-        return ResponseEntity.status(HttpStatus.OK).body(vendaServico.buscarPorProduto(produtoObj));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        YearMonth yearMonth = YearMonth.parse(mes, formatter);
+
+        List<Venda> vendas = vendaService.buscarVendasPorMes(yearMonth);
+
+        return ResponseEntity.status(HttpStatus.OK).body(vendas);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "vendas", params = "sku")
+    public ResponseEntity<Object> buscarVendasPorProduto(@RequestParam("sku") String produtoId) {
+        logger.info("Buscando vendas por produto id: " + produtoId);
+
+        Optional<Produto> produtoOpt = produtoService.buscarPorId(produtoId);
+        if (produtoOpt.isPresent()) {
+            List<Venda> vendas = vendaService.buscarPorProduto(produtoOpt.get());
+            return ResponseEntity.status(HttpStatus.OK).body(vendas);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado com o id: " + produtoId);
+        }
     }
 
     @CrossOrigin
@@ -89,7 +113,7 @@ public class APIVendaController {
     public ResponseEntity<Object> buscarPorStatus(@RequestParam String status) {
         logger.info("Buscando venda por status: " + status);
 
-        return ResponseEntity.status(HttpStatus.OK).body(vendaServico.buscarPorStatus(status));
+        return ResponseEntity.status(HttpStatus.OK).body(vendaService.buscarPorStatus(status));
     }
 
     @CrossOrigin
@@ -98,7 +122,7 @@ public class APIVendaController {
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
         logger.info("Salvando venda: " + venda);
 
-        Optional<Venda> vendaSalva = vendaServico.salvarVenda(venda);
+        Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
         return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
     }
 
@@ -106,18 +130,18 @@ public class APIVendaController {
     @PatchMapping("/vendas")
     @Transactional
     public ResponseEntity<Object> atualizar(@RequestBody Venda venda) {
-        logger.info("Atualizando venda: " + venda);
+        logger.info("Atualizando venda");
 
-        return ResponseEntity.status(HttpStatus.OK).body(vendaServico.atualizarVenda(venda));
+        return ResponseEntity.status(HttpStatus.OK).body(vendaService.atualizarVenda(venda));
     }
 
     @CrossOrigin
     @DeleteMapping(value = "vendas", params = "id")
     @Transactional
     public ResponseEntity<Object> deletarPorId(@RequestParam String id, HttpServletRequest req) {
-        logger.info("Deletando venda por id: " + id);
+        logger.info("Deletando venda por id");
 
-        vendaServico.deletarPorId(id);
+        vendaService.deletarPorId(id);
 
         Resposta resposta = new Resposta();
         resposta.setMensagem("Venda deletada com sucesso");
@@ -125,5 +149,4 @@ public class APIVendaController {
         resposta.setMetodo(req.getMethod());
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
-
 }

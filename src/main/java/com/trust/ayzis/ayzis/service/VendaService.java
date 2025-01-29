@@ -1,6 +1,7 @@
 package com.trust.ayzis.ayzis.service;
 
 import java.sql.Date;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,18 @@ public class VendaService implements IVendaService {
         logger.info("Buscando venda por data: " + data);
 
         List<Venda> vendas = vendaRepository.findByDataVenda(data);
+        return vendas;
+    }
+
+    @Override
+    public List<Venda> buscarVendasPorMes(YearMonth yearMonth) {
+        logger.info("Buscando vendas por mês");
+
+        List<Venda> vendas = vendaRepository.findByDataVendaBetween(
+            Date.valueOf(yearMonth.atDay(1)),
+            Date.valueOf(yearMonth.atEndOfMonth())
+        );
+
         return vendas;
     }
 
@@ -91,5 +104,4 @@ public class VendaService implements IVendaService {
 
         vendaRepository.deleteById(id);
     }
-
 }

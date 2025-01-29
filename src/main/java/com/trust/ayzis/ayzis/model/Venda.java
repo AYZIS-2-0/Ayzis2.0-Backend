@@ -3,6 +3,7 @@ package com.trust.ayzis.ayzis.model;
 import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
@@ -21,8 +22,8 @@ public class Venda {
     private Double valorTotal;
 
     @ManyToOne
-    @JsonManagedReference
     private Produto produto;
+
 
     // Getters and Setters
 

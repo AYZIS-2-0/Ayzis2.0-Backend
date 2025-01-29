@@ -1,6 +1,7 @@
 package com.trust.ayzis.ayzis.service;
 
 import java.sql.Date;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,8 @@ public interface IVendaService {
     public Optional<Venda> buscarPorId(String id);
 
     public List<Venda> buscarPorData(Date data);
+
+    public List<Venda> buscarVendasPorMes(YearMonth yearMonth);
 
     public List<Venda> buscarPorProduto(Produto produto);
 
