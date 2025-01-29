@@ -7,13 +7,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import com.trust.ayzis.ayzis.model.Produto;
 
+import io.micrometer.common.lang.NonNull;
+
 @Repository
 public interface IProudutoRepository extends JpaRepository<Produto, String> {
-    public Optional<Produto> findById(String id);
 
-    public Optional<Produto> findByNome(String nome);
+    @NonNull
+    public Optional<Produto> findById(@NonNull String id);
+
+    public List<Produto> findByNomeContainingIgnoreCase(String nome);
 
     public List<Produto> findByProdutosComposicao_Produto(Produto produto);
 
-    public void deleteById(String id);
+    public void deleteById(@NonNull String id);
 }

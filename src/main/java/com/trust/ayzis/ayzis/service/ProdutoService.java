@@ -8,41 +8,47 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.trust.ayzis.ayzis.exception.ProdutoNotFoundException;
 import com.trust.ayzis.ayzis.model.IProudutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 
 @Service
-public class ProdutoService implements IProdutoServico {
-    
+public class ProdutoService implements IProdutoService {
+
     Logger logger = LogManager.getLogger(this.getClass());
-    
+
     @Autowired
     IProudutoRepository produtoRepository;
-    
+
     @Override
     public Optional<Produto> buscarPorId(String id) {
         logger.info("Buscando produto por id: " + id);
-        
+
         Optional<Produto> produto = produtoRepository.findById(id);
         return produto;
     }
-    
+
     @Override
-    public Optional<Produto> buscarPorNome(String nome) {
+    public List<Produto> buscarPorNome(String nome) {
         logger.info("Buscando produto por nome: " + nome);
-        
-        Optional<Produto> produto = produtoRepository.findByNome(nome);
+
+        List<Produto> produto = produtoRepository.findByNomeContainingIgnoreCase(nome);
+
+        if (produto.isEmpty()) {
+            throw new ProdutoNotFoundException("Produto não encontrado com o nome: " + nome);
+        }
+
         return produto;
     }
 
     @Override
     public List<Produto> buscarPorProdutosCompostos(Produto produtosCompostos) {
         logger.info("Buscando produtos por produtos compostos: " + produtosCompostos);
-        
+
         List<Produto> produtos = produtoRepository.findByProdutosComposicao_Produto(produtosCompostos);
         return produtos;
     }
-    
+
     @Override
     public List<Produto> buscarTodos() {
         logger.info("Buscando todos os produtos");
@@ -54,7 +60,6 @@ public class ProdutoService implements IProdutoServico {
     @Override
     public Optional<Produto> salvarProduto(Produto produto) {
         logger.info("Salvando produto: " + produto);
-        
 
         Optional<Produto> produtoSalvo = Optional.of(produtoRepository.save(produto));
         return produtoSalvo;
@@ -87,6 +92,5 @@ public class ProdutoService implements IProdutoServico {
 
         produtoRepository.deleteById(id);
     }
-
 
 }

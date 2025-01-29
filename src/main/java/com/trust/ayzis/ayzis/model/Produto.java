@@ -27,7 +27,7 @@ public class Produto {
     private String unidade;
     private boolean composto;
 
-    @OneToMany(mappedBy = "produtoComposto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToMany(mappedBy = "produtoComposto", cascade = { CascadeType.ALL })
     @JsonManagedReference
     private List<ProdutoComposicao> produtosComposicao;
 

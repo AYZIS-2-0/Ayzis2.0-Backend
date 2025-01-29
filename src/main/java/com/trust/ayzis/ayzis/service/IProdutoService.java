@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import com.trust.ayzis.ayzis.model.Produto;
 
-public interface IProdutoServico {
+public interface IProdutoService {
     public Optional<Produto> buscarPorId(String id);
 
-    public Optional<Produto> buscarPorNome(String nome);
+    public List<Produto> buscarPorNome(String nome);
 
     public List<Produto> buscarPorProdutosCompostos(Produto produtosCompostos);
 

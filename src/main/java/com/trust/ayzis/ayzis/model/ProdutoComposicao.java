@@ -15,6 +15,8 @@ public class ProdutoComposicao {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private int quantidade;
+    
     @ManyToOne
     @JsonBackReference
     private Produto produtoComposto;
@@ -22,7 +24,6 @@ public class ProdutoComposicao {
     @OneToOne
     private Produto produto;
 
-    private int quantidade;
 
     public ProdutoComposicao() {
     }
