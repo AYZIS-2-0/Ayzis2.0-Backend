@@ -41,7 +41,7 @@ public class APIProdutoController {
     public ResponseEntity<Object> buscarTodos() {
         logger.info("Buscando todos os produtos");
 
-        return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarTodos());
+        return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarTodosProdutos());
     }
 
     @CrossOrigin
@@ -89,7 +89,7 @@ public class APIProdutoController {
     public ResponseEntity<Object> atualizar(@RequestBody Produto produto) {
         logger.info("Atualizando produto: " + produto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(produtoServico.atualizar(produto));
+        return ResponseEntity.status(HttpStatus.OK).body(produtoServico.atualizarProduto(produto));
     }
 
     @CrossOrigin
@@ -98,7 +98,7 @@ public class APIProdutoController {
     public ResponseEntity<Object> deletarPorId(@RequestParam("id") String id, HttpServletRequest req) {
         logger.info("Deletando produto por id: " + id);
 
-        produtoServico.deletarPorId(id);
+        produtoServico.deletarProdutoPorId(id);
 
         Resposta resposta = new Resposta();
         resposta.setMensagem("Produto deletado com sucesso");

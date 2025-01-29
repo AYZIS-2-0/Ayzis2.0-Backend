@@ -2,6 +2,7 @@ package com.trust.ayzis.ayzis.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -30,6 +31,10 @@ public class Produto {
     @OneToMany(mappedBy = "produtoComposto", cascade = { CascadeType.ALL })
     @JsonManagedReference
     private List<ProdutoComposicao> produtosComposicao;
+
+    @OneToMany(mappedBy = "venda", cascade = { CascadeType.ALL })
+    @JsonBackReference
+    private List<Venda> vendas;
 
     public Produto() {
     }

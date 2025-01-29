@@ -12,11 +12,11 @@ public interface IProdutoService {
 
     public List<Produto> buscarPorProdutosCompostos(Produto produtosCompostos);
 
-    public List<Produto> buscarTodos();
+    public List<Produto> buscarTodosProdutos();
 
     public Optional<Produto> salvarProduto(Produto produto);
 
-    public Optional<Produto> atualizar(Produto produto);
+    public Optional<Produto> atualizarProduto(Produto produto);
 
-    public void deletarPorId(String id);
+    public void deletarProdutoPorId(String id);
 }

@@ -50,7 +50,7 @@ public class ProdutoService implements IProdutoService {
     }
 
     @Override
-    public List<Produto> buscarTodos() {
+    public List<Produto> buscarTodosProdutos() {
         logger.info("Buscando todos os produtos");
 
         List<Produto> produtos = produtoRepository.findAll();
@@ -66,7 +66,7 @@ public class ProdutoService implements IProdutoService {
     }
 
     @Override
-    public Optional<Produto> atualizar(Produto newProduto) {
+    public Optional<Produto> atualizarProduto(Produto newProduto) {
         logger.info("Atualizando produto: " + newProduto);
 
         return produtoRepository.findById(newProduto.getId()).map(produto -> {
@@ -87,7 +87,7 @@ public class ProdutoService implements IProdutoService {
     }
 
     @Override
-    public void deletarPorId(String id) {
+    public void deletarProdutoPorId(String id) {
         logger.info("Deletando produto por id: " + id);
 
         produtoRepository.deleteById(id);
