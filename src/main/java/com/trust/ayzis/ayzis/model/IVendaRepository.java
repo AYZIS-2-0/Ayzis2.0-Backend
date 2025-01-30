@@ -11,13 +11,15 @@ import java.sql.Date;
 
 @Repository
 public interface IVendaRepository extends JpaRepository<Venda, String> {
-    
+
     @NonNull
     public Optional<Venda> findById(@NonNull String id);
 
     public List<Venda> findByDataVenda(Date dataVenda);
 
     public List<Venda> findByDataVendaBetween(Date start, Date end);
+
+    public List<Venda> findByProdutoAndDataVendaBetween(Produto produto, Date start, Date end);
 
     public List<Venda> findByProduto(Produto produto);
 

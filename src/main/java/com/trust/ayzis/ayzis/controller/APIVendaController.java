@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trust.ayzis.ayzis.exception.ExceptionLogger;
+import com.trust.ayzis.ayzis.model.IVendaRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.model.Venda;
@@ -43,6 +46,9 @@ public class APIVendaController {
 
     @Autowired
     IProdutoService produtoService;
+
+    @Autowired
+    IVendaRepository vendaRespoitory;
 
     @CrossOrigin
     @GetMapping("/vendas")
@@ -108,6 +114,24 @@ public class APIVendaController {
     }
 
     @CrossOrigin
+    @GetMapping(value = "vendas", params = {"sku", "mes"})
+    @Transactional
+    public ResponseEntity<Object> buscarVendasPorProdutoMes(@RequestParam("sku") String produtoId, @RequestParam("mes") String mes) {
+        logger.info("Buscando vendas por produto id: " + produtoId + " e mês: " + mes);
+
+        Optional<Produto> produtoOpt = produtoService.buscarPorId(produtoId);
+        if (produtoOpt.isPresent()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            YearMonth yearMonth = YearMonth.parse(mes, formatter);
+
+            List<Venda> vendas = vendaService.buscarPorProdutoMes(produtoOpt.get(), yearMonth);
+            return ResponseEntity.status(HttpStatus.OK).body(vendas);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado com o id: " + produtoId);
+        }
+    }
+
+    @CrossOrigin
     @GetMapping(value = "vendas", params = "status")
     @Transactional
     public ResponseEntity<Object> buscarPorStatus(@RequestParam String status) {
@@ -121,6 +145,10 @@ public class APIVendaController {
     @Transactional
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
         logger.info("Salvando venda: " + venda);
+
+        if(vendaRespoitory.existsById(venda.getId())) {
+            throw new ExceptionLogger("Venda já existe com o id: " + venda.getId());
+        }
 
         Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
         return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
@@ -148,5 +176,11 @@ public class APIVendaController {
         resposta.setCaminho(req.getRequestURI());
         resposta.setMetodo(req.getMethod());
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
+    }
+
+    @ExceptionHandler(ExceptionLogger.class)
+    public ResponseEntity<String> handleProdutoNotFoundException(ExceptionLogger ex) {
+        logger.error("Erro: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }

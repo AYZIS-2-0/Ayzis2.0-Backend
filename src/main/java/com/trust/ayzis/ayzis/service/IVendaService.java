@@ -17,6 +17,8 @@ public interface IVendaService {
 
     public List<Venda> buscarPorProduto(Produto produto);
 
+    public List<Venda> buscarPorProdutoMes(Produto produto, YearMonth yearMonth);
+
     public List<Venda> buscarPorStatus(String status);
 
     public List<Venda> buscarTodasVendas();

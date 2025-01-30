@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trust.ayzis.ayzis.exception.ProdutoNotFoundException;
+import com.trust.ayzis.ayzis.exception.ExceptionLogger;
+import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.service.IProdutoService;
@@ -35,6 +36,9 @@ public class APIProdutoController {
 
     @Autowired
     IProdutoService produtoServico;
+
+    @Autowired
+    IProdutoRepository produtoRepository;
 
     @CrossOrigin
     @GetMapping("/produtos")
@@ -68,8 +72,8 @@ public class APIProdutoController {
         return produtoServico.buscarPorProdutosCompostos(produto);
     }
 
-    @ExceptionHandler(ProdutoNotFoundException.class)
-    public ResponseEntity<String> handleProdutoNotFoundException(ProdutoNotFoundException ex) {
+    @ExceptionHandler(ExceptionLogger.class)
+    public ResponseEntity<String> handleProdutoNotFoundException(ExceptionLogger ex) {
         logger.error("Erro: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
@@ -79,6 +83,10 @@ public class APIProdutoController {
     @Transactional
     public ResponseEntity<Object> salvarProduto(@RequestBody Produto produto) {
         logger.info("Salvando produto");
+
+        if (produtoRepository.existsById(produto.getId())) {
+            throw new ExceptionLogger("Produto já existe com o id: " + produto.getId());
+        }
 
         Optional<Produto> produtoSalvo = produtoServico.salvarProduto(produto);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);

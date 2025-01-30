@@ -43,9 +43,8 @@ public class VendaService implements IVendaService {
         logger.info("Buscando vendas por mês");
 
         List<Venda> vendas = vendaRepository.findByDataVendaBetween(
-            Date.valueOf(yearMonth.atDay(1)),
-            Date.valueOf(yearMonth.atEndOfMonth())
-        );
+                Date.valueOf(yearMonth.atDay(1)),
+                Date.valueOf(yearMonth.atEndOfMonth()));
 
         return vendas;
     }
@@ -55,6 +54,18 @@ public class VendaService implements IVendaService {
         logger.info("Buscando venda por produto: " + produto);
 
         List<Venda> vendas = vendaRepository.findByProduto(produto);
+        return vendas;
+    }
+
+    @Override
+    public List<Venda> buscarPorProdutoMes(Produto produto, YearMonth yearMonth) {
+        logger.info("Buscando vendas por produto e mês");
+
+        List<Venda> vendas = vendaRepository.findByProdutoAndDataVendaBetween(
+                produto,
+                Date.valueOf(yearMonth.atDay(1)),
+                Date.valueOf(yearMonth.atEndOfMonth()));
+
         return vendas;
     }
 
@@ -93,7 +104,7 @@ public class VendaService implements IVendaService {
             venda.setQuantidade(newVenda.getQuantidade());
             venda.setValorTotal(newVenda.getValorTotal());
             venda.setProduto(newVenda.getProduto());
-            
+
             return vendaRepository.save(venda);
         });
     }

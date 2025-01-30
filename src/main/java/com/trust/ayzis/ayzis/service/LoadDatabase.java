@@ -10,7 +10,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.trust.ayzis.ayzis.model.IProudutoRepository;
+import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.ProdutoComposicao;
 import com.trust.ayzis.ayzis.model.Venda;
@@ -21,7 +21,7 @@ public class LoadDatabase {
 
     @Bean
     CommandLineRunner initDatabase(
-            IProudutoRepository produtoRepository) {
+            IProdutoRepository produtoRepository) {
 
         return args -> {
             Produto produto1 = new Produto("772040NOVA","BANDEJA NOVA DIANTEIRA DIREITA HILUX 2005 A 2015 COM PIVÔ", null, "FORTIKIT", "Produto", "Novo",664.58, 20.0, 10.0, 20.0, 350, "Unidade", false, null);

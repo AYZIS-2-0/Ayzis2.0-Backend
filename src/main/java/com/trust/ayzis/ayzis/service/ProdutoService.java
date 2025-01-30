@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.trust.ayzis.ayzis.exception.ProdutoNotFoundException;
-import com.trust.ayzis.ayzis.model.IProudutoRepository;
+import com.trust.ayzis.ayzis.exception.ExceptionLogger;
+import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 
 @Service
@@ -18,7 +18,7 @@ public class ProdutoService implements IProdutoService {
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Autowired
-    IProudutoRepository produtoRepository;
+    IProdutoRepository produtoRepository;
 
     @Override
     public Optional<Produto> buscarPorId(String id) {
@@ -35,7 +35,7 @@ public class ProdutoService implements IProdutoService {
         List<Produto> produto = produtoRepository.findByNomeContainingIgnoreCase(nome);
 
         if (produto.isEmpty()) {
-            throw new ProdutoNotFoundException("Produto não encontrado com o nome: " + nome);
+            throw new ExceptionLogger("Produto não encontrado com o nome: " + nome);
         }
 
         return produto;
@@ -60,6 +60,8 @@ public class ProdutoService implements IProdutoService {
     @Override
     public Optional<Produto> salvarProduto(Produto produto) {
         logger.info("Salvando produto: " + produto);
+
+        
 
         Optional<Produto> produtoSalvo = Optional.of(produtoRepository.save(produto));
         return produtoSalvo;

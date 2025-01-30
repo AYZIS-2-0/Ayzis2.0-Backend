@@ -10,7 +10,7 @@ import com.trust.ayzis.ayzis.model.Produto;
 import io.micrometer.common.lang.NonNull;
 
 @Repository
-public interface IProudutoRepository extends JpaRepository<Produto, String> {
+public interface IProdutoRepository extends JpaRepository<Produto, String> {
 
     @NonNull
     public Optional<Produto> findById(@NonNull String id);
