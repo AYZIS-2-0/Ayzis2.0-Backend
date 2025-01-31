@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
+import com.trust.ayzis.ayzis.model.Componentes;
 import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
+import com.trust.ayzis.ayzis.service.IComponentesService;
 import com.trust.ayzis.ayzis.service.IProdutoService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +41,9 @@ public class APIProdutoController {
 
     @Autowired
     IProdutoRepository produtoRepository;
+
+    @Autowired
+    IComponentesService componentesService;
 
     @CrossOrigin
     @GetMapping("/produtos")
@@ -107,6 +112,19 @@ public class APIProdutoController {
     public ResponseEntity<Object> deletarPorId(@RequestParam("id") String id, HttpServletRequest req) {
         logger.info("Deletando produto por id");
 
+        Optional<Produto> optionalProduto = produtoServico.buscarPorId(id);
+        if (!optionalProduto.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
+        }
+        Produto produto = optionalProduto.get();
+
+        // Verificar se o produto é um produto componente em algum componente
+        List<Componentes> componentes = componentesService.buscarPorProdutoComponente(produto);
+        for (Componentes componente : componentes) {
+            componentesService.deletarComponentePorId(componente.getId());
+        }
+
+        // Deletar o produto
         produtoServico.deletarProdutoPorId(id);
 
         Resposta resposta = new Resposta();

@@ -29,11 +29,11 @@ public class Produto {
     private String unidade;
     private boolean composto;
 
-    @OneToMany(mappedBy = "produtoComposto", cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "produtoComposto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<ProdutoComposicao> produtosComposicao;
+    private List<Componentes> produtosComposicao;
 
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Venda> vendas;
 
@@ -42,7 +42,7 @@ public class Produto {
 
     public Produto(String id, String nome, String descricao, String marca, String tipo, String condicao, double preco,
             double largura, double altura, double profundidade, double peso, String unidade, boolean composto,
-            List<ProdutoComposicao> produtosComposicao) {
+            List<Componentes> produtosComposicao) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -164,11 +164,11 @@ public class Produto {
         this.composto = composto;
     }
 
-    public List<ProdutoComposicao> getProdutosComposicao() {
+    public List<Componentes> getProdutosComposicao() {
         return produtosComposicao;
     }
 
-    public void setProdutosComposicao(List<ProdutoComposicao> produtosComposicao) {
+    public void setProdutosComposicao(List<Componentes> produtosComposicao) {
         this.produtosComposicao = produtosComposicao;
         this.composto = (produtosComposicao != null && !produtosComposicao.isEmpty());
     }

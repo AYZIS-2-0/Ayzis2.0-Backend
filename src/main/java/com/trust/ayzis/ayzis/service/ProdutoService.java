@@ -22,7 +22,7 @@ public class ProdutoService implements IProdutoService {
 
     @Override
     public Optional<Produto> buscarPorId(String id) {
-        logger.info("Buscando produto por id: " + id);
+        logger.info("Buscando produto por id");
 
         Optional<Produto> produto = produtoRepository.findById(id);
         return produto;
@@ -45,7 +45,7 @@ public class ProdutoService implements IProdutoService {
     public List<Produto> buscarPorProdutosCompostos(Produto produtosCompostos) {
         logger.info("Buscando produtos por produtos compostos: " + produtosCompostos);
 
-        List<Produto> produtos = produtoRepository.findByProdutosComposicao_Produto(produtosCompostos);
+        List<Produto> produtos = produtoRepository.findByProdutosComposicao_ProdutoComposto(produtosCompostos);
         return produtos;
     }
 
@@ -60,8 +60,6 @@ public class ProdutoService implements IProdutoService {
     @Override
     public Optional<Produto> salvarProduto(Produto produto) {
         logger.info("Salvando produto: " + produto);
-
-        
 
         Optional<Produto> produtoSalvo = Optional.of(produtoRepository.save(produto));
         return produtoSalvo;
@@ -84,7 +82,7 @@ public class ProdutoService implements IProdutoService {
             produto.setPeso(newProduto.getPeso());
             produto.setUnidade(newProduto.getUnidade());
             produto.setProdutosComposicao(newProduto.getProdutosComposicao());
-            
+
             return produtoRepository.save(produto);
         });
     }

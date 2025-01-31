@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
-import com.trust.ayzis.ayzis.model.ProdutoComposicao;
+import com.trust.ayzis.ayzis.model.Componentes;
 import com.trust.ayzis.ayzis.model.Venda;
 
 @Configuration
@@ -34,8 +34,8 @@ public class LoadDatabase {
             Venda venda3 = new Venda("3", Date.valueOf("2021-01-02"), "Pendente", "Venda pendente", 1, 1169.23, produto3);
             Venda venda4 = new Venda("4", Date.valueOf("2021-02-02"), "Pendente", "Venda pendente", 1, 1169.23, produto3);
             
-            ProdutoComposicao produtoComposicao1 = new ProdutoComposicao(produto3, produto1, 1);
-            ProdutoComposicao produtoComposicao2 = new ProdutoComposicao(produto3, produto2, 1);
+            Componentes produtoComposicao1 = new Componentes(produto3, produto1, 1);
+            Componentes produtoComposicao2 = new Componentes(produto3, produto2, 1);
             
             produto3.setProdutosComposicao(List.of(produtoComposicao1, produtoComposicao2));
             

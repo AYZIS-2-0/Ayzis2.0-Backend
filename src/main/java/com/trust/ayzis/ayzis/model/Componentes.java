@@ -2,6 +2,7 @@ package com.trust.ayzis.ayzis.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,27 +11,26 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 @Entity
-public class ProdutoComposicao {
+public class Componentes {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private int quantidade;
-    
+
     @ManyToOne
     @JsonBackReference
     private Produto produtoComposto;
 
     @OneToOne
-    private Produto produto;
+    private Produto produtoComponente;
 
-
-    public ProdutoComposicao() {
+    public Componentes() {
     }
 
-    public ProdutoComposicao(Produto produtoComposto, Produto produto, int quantidade) {
+    public Componentes(Produto produtoComposto, Produto produtoComponente, int quantidade) {
         this.produtoComposto = produtoComposto;
-        this.produto = produto;
+        this.produtoComponente = produtoComponente;
         this.quantidade = quantidade;
     }
 
@@ -51,12 +51,12 @@ public class ProdutoComposicao {
         this.produtoComposto = produtoComposto;
     }
 
-    public Produto getProduto() {
-        return produto;
+    public Produto getProdutoComponente() {
+        return produtoComponente;
     }
 
-    public void setProduto(Produto produto) {
-        this.produto = produto;
+    public void setProdutoComponente(Produto produto) {
+        this.produtoComponente = produto;
     }
 
     public int getQuantidade() {
