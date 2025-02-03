@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -48,10 +51,12 @@ public class APIProdutoController {
     @CrossOrigin
     @GetMapping("/produtos")
     @Transactional
-    public ResponseEntity<Object> buscarTodos() {
+    public ResponseEntity<Object> buscarTodos(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "limit", defaultValue = "10") int limit) {
         logger.info("Buscando todos os produtos");
 
-        return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarTodosProdutos());
+        Pageable pageable = PageRequest.of(page, limit);
+        List<Produto> produtos = produtoServico.buscarTodosProdutos(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(produtos);
     }
 
     @CrossOrigin

@@ -28,7 +28,7 @@ import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api/v1")
-public class APIComponentes {
+public class APIComponentesController {
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Autowired

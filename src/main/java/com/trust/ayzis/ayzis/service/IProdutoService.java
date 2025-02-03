@@ -3,6 +3,8 @@ package com.trust.ayzis.ayzis.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+
 import com.trust.ayzis.ayzis.model.Produto;
 
 public interface IProdutoService {
@@ -12,7 +14,7 @@ public interface IProdutoService {
 
     public List<Produto> buscarPorProdutosCompostos(Produto produtosCompostos);
 
-    public List<Produto> buscarTodosProdutos();
+    public List<Produto> buscarTodosProdutos(Pageable pageable);
 
     public Optional<Produto> salvarProduto(Produto produto);
 

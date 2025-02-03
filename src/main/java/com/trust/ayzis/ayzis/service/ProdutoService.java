@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
@@ -50,10 +51,10 @@ public class ProdutoService implements IProdutoService {
     }
 
     @Override
-    public List<Produto> buscarTodosProdutos() {
+    public List<Produto> buscarTodosProdutos(Pageable pageable) {
         logger.info("Buscando todos os produtos");
 
-        List<Produto> produtos = produtoRepository.findAll();
+        List<Produto> produtos = produtoRepository.findAll(pageable).getContent();
         return produtos;
     }
 
