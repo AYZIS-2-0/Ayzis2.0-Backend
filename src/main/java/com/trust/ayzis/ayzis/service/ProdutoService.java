@@ -23,7 +23,7 @@ public class ProdutoService implements IProdutoService {
 
     @Override
     public Optional<Produto> buscarPorId(String id) {
-        logger.info("Buscando produto por id");
+        logger.info("Buscando produto por id" + id);
 
         Optional<Produto> produto = produtoRepository.findById(id);
         return produto;
@@ -44,7 +44,7 @@ public class ProdutoService implements IProdutoService {
 
     @Override
     public List<Produto> buscarPorProdutosCompostos(Produto produtosCompostos) {
-        logger.info("Buscando produtos por produtos compostos: " + produtosCompostos);
+        logger.info("Buscando produtos por produtos compostos: " + produtosCompostos.getId());
 
         List<Produto> produtos = produtoRepository.findByProdutosComposicao_ProdutoComposto(produtosCompostos);
         return produtos;
@@ -60,7 +60,7 @@ public class ProdutoService implements IProdutoService {
 
     @Override
     public Optional<Produto> salvarProduto(Produto produto) {
-        logger.info("Salvando produto: " + produto);
+        logger.info("Salvando produto: " + produto.getId());
 
         Optional<Produto> produtoSalvo = Optional.of(produtoRepository.save(produto));
         return produtoSalvo;
@@ -68,7 +68,7 @@ public class ProdutoService implements IProdutoService {
 
     @Override
     public Optional<Produto> atualizarProduto(Produto newProduto) {
-        logger.info("Atualizando produto: " + newProduto);
+        logger.info("Atualizando produto: " + newProduto.getId());
 
         return produtoRepository.findById(newProduto.getId()).map(produto -> {
             produto.setNome(newProduto.getNome());

@@ -144,7 +144,7 @@ public class APIVendaController {
     @PostMapping("/vendas")
     @Transactional
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
-        logger.info("Salvando venda: " + venda);
+        logger.info("Salvando venda: " + venda.getId());
 
         if(vendaRespoitory.existsById(venda.getId())) {
             throw new ExceptionLogger("Venda já existe com o id: " + venda.getId());
@@ -158,7 +158,7 @@ public class APIVendaController {
     @PatchMapping("/vendas")
     @Transactional
     public ResponseEntity<Object> atualizar(@RequestBody Venda venda) {
-        logger.info("Atualizando venda");
+        logger.info("Atualizando venda" + venda.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(vendaService.atualizarVenda(venda));
     }
@@ -167,7 +167,7 @@ public class APIVendaController {
     @DeleteMapping(value = "vendas", params = "id")
     @Transactional
     public ResponseEntity<Object> deletarPorId(@RequestParam String id, HttpServletRequest req) {
-        logger.info("Deletando venda por id");
+        logger.info("Deletando venda por id" + id);
 
         vendaService.deletarPorId(id);
 

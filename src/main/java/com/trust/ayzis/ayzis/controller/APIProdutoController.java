@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,8 @@ public class APIProdutoController {
     @CrossOrigin
     @GetMapping("/produtos")
     @Transactional
-    public ResponseEntity<Object> buscarTodos(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "limit", defaultValue = "10") int limit) {
+    public ResponseEntity<Object> buscarTodos(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit) {
         logger.info("Buscando todos os produtos");
 
         Pageable pageable = PageRequest.of(page, limit);
@@ -63,7 +65,7 @@ public class APIProdutoController {
     @GetMapping(value = "produtos", params = "id")
     @Transactional
     public ResponseEntity<Object> buscarPorId(@RequestParam("id") String id) {
-        logger.info("Buscando produto por id");
+        logger.info("Buscando produto por id" + id);
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarPorId(id));
     }
@@ -72,7 +74,7 @@ public class APIProdutoController {
     @GetMapping(value = "produtos", params = "nome")
     @Transactional
     public ResponseEntity<Object> buscarPorNome(@RequestParam String nome) {
-        logger.info("Buscando produto por nome");
+        logger.info("Buscando produto por nome" + nome);
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoServico.buscarPorNome(nome));
     }
@@ -88,25 +90,49 @@ public class APIProdutoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        logger.error("Erro de integridade de dados: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro de integridade de dados: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception ex) {
+        logger.error("Erro interno: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno: " + ex.getMessage());
+    }
+
     @CrossOrigin
     @PostMapping("/produtos")
     @Transactional
     public ResponseEntity<Object> salvarProduto(@RequestBody Produto produto) {
-        logger.info("Salvando produto");
+        logger.info(">>> Salvando produto: " + produto.getId());
 
-        if (produtoRepository.existsById(produto.getId())) {
-            throw new ExceptionLogger("Produto já existe com o id: " + produto.getId());
+        try {
+            if (produtoRepository.existsById(produto.getId())) {
+                throw new ExceptionLogger("Produto já existe com o id: " + produto.getId());
+            }
+
+            Optional<Produto> produtoSalvo = produtoServico.salvarProduto(produto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
+        } catch (ExceptionLogger ex) {
+            logger.error("Erro: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (DataIntegrityViolationException ex) {
+            logger.error("Erro de integridade de dados: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de integridade de dados: " + ex.getMessage());
+        } catch (Exception ex) {
+            logger.error("Erro interno: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno: " + ex.getMessage());
         }
-
-        Optional<Produto> produtoSalvo = produtoServico.salvarProduto(produto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
     }
 
     @CrossOrigin
     @PatchMapping("/produtos")
     @Transactional
     public ResponseEntity<Object> atualizar(@RequestBody Produto produto) {
-        logger.info("Atualizando produto");
+        logger.info("Atualizando produto" + produto.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoServico.atualizarProduto(produto));
     }
@@ -115,7 +141,7 @@ public class APIProdutoController {
     @DeleteMapping("/produtos/deletar")
     @Transactional
     public ResponseEntity<Object> deletarPorId(@RequestParam("id") String id, HttpServletRequest req) {
-        logger.info("Deletando produto por id");
+        logger.info("Deletando produto por id" + id);
 
         Optional<Produto> optionalProduto = produtoServico.buscarPorId(id);
         if (!optionalProduto.isPresent()) {

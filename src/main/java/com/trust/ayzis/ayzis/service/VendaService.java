@@ -51,7 +51,7 @@ public class VendaService implements IVendaService {
 
     @Override
     public List<Venda> buscarPorProduto(Produto produto) {
-        logger.info("Buscando venda por produto: " + produto);
+        logger.info("Buscando venda por produto: " + produto.getId());
 
         List<Venda> vendas = vendaRepository.findByProduto(produto);
         return vendas;
@@ -59,7 +59,7 @@ public class VendaService implements IVendaService {
 
     @Override
     public List<Venda> buscarPorProdutoMes(Produto produto, YearMonth yearMonth) {
-        logger.info("Buscando vendas por produto e mês");
+        logger.info("Buscando vendas por produto e mês" + produto.getId() + ":" + yearMonth);
 
         List<Venda> vendas = vendaRepository.findByProdutoAndDataVendaBetween(
                 produto,
@@ -87,7 +87,7 @@ public class VendaService implements IVendaService {
 
     @Override
     public Optional<Venda> salvarVenda(Venda venda) {
-        logger.info("Salvando venda: " + venda);
+        logger.info("Salvando venda: " + venda.getId());
 
         Optional<Venda> vendaSalva = Optional.of(vendaRepository.save(venda));
         return vendaSalva;
@@ -95,7 +95,7 @@ public class VendaService implements IVendaService {
 
     @Override
     public Optional<Venda> atualizarVenda(Venda newVenda) {
-        logger.info("Atualizando venda: " + newVenda);
+        logger.info("Atualizando venda: " + newVenda.getId());
 
         return vendaRepository.findById(newVenda.getId()).map(venda -> {
             venda.setDataVenda(newVenda.getDataVenda());

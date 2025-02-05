@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trust.ayzis.ayzis.exception.ExceptionLogger;
 import com.trust.ayzis.ayzis.model.Componentes;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
@@ -41,7 +44,7 @@ public class APIComponentesController {
     @GetMapping(value = "componentes", params = "id")
     @Transactional
     public ResponseEntity<Object> buscarPorId(@RequestParam("id") Long id) {
-        logger.info("Buscando componente por id");
+        logger.info("Buscando componente por id" + id);
 
         return ResponseEntity.status(HttpStatus.OK).body(componentesService.buscarPorId(id));
     }
@@ -50,7 +53,7 @@ public class APIComponentesController {
     @GetMapping(value = "componentes", params = "produtoComposto")
     @Transactional
     public ResponseEntity<Object> buscarPorProdutoComposto(@RequestParam("produtoComposto") String produtoComposto) {
-        logger.info("Buscando componentes por produto composto");
+        logger.info("Buscando componentes por produto composto" + produtoComposto);
 
         Optional<Produto> optionalProduto = produtoService.buscarPorId(produtoComposto);
         if (!optionalProduto.isPresent()) {
@@ -66,7 +69,7 @@ public class APIComponentesController {
     @Transactional
     public ResponseEntity<Object> buscarPorProdutoComponente(
             @RequestParam("produtoComponente") String produtoComponente) {
-        logger.info("Buscando componentes por produto componente");
+        logger.info("Buscando componentes por produto componente" + produtoComponente);
 
         Optional<Produto> optionalProduto = produtoService.buscarPorId(produtoComponente);
         if (!optionalProduto.isPresent()) {
@@ -81,8 +84,9 @@ public class APIComponentesController {
     @PostMapping(value = "componentes", params = "produtoComposto")
     @Transactional
     public ResponseEntity<Object> salvarComponente(@RequestParam("produtoComposto") String produtoComposto,
-            @RequestParam("produtoComponente") String produtoComponente, @RequestParam("quantidade") Integer quantidade) {
-        logger.info("Salvando componente");
+            @RequestParam("produtoComponente") String produtoComponente,
+            @RequestParam("quantidade") Integer quantidade) {
+        logger.info("Salvando componente: " + produtoComposto +':'+ produtoComponente + ':' + quantidade);
 
         Optional<Produto> optionalProdutoComposto = produtoService.buscarPorId(produtoComposto);
         if (!optionalProdutoComposto.isPresent()) {
@@ -102,10 +106,7 @@ public class APIComponentesController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Componente já existe");
         }
 
-        Componentes componentes = new Componentes();
-        componentes.setProdutoComposto(produtoCompostoEntity);
-        componentes.setProdutoComponente(produtoComponenteEntity);
-        componentes.setQuantidade(quantidade);
+        Componentes componentes = new Componentes(produtoCompostoEntity, produtoComponenteEntity, quantidade);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(componentesService.salvarComponente(componentes));
@@ -118,23 +119,23 @@ public class APIComponentesController {
             @RequestParam("produtoComposto") String produtoComposto,
             @RequestParam("produtoComponente") String produtoComponente,
             @RequestParam("quantidade") Integer quantidade) {
-        logger.info("Atualizando componente");
+        logger.info("Atualizando componente" + id);
 
         Optional<Componentes> optionalComponente = componentesService.buscarPorId(id);
         if (!optionalComponente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Componente não encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Componente não encontrado" + id);
         }
         Componentes componente = optionalComponente.get();
 
         Optional<Produto> optionalProdutoComposto = produtoService.buscarPorId(produtoComposto);
         if (!optionalProdutoComposto.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto composto não encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto composto não encontrado" + produtoComposto);
         }
         Produto produtoCompostoEntity = optionalProdutoComposto.get();
 
         Optional<Produto> optionalProdutoComponente = produtoService.buscarPorId(produtoComponente);
         if (!optionalProdutoComponente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto componente não encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto componente não encontrado" + produtoComponente);
         }
         Produto produtoComponenteEntity = optionalProdutoComponente.get();
 
@@ -150,10 +151,10 @@ public class APIComponentesController {
     @DeleteMapping(value = "componentes", params = "id")
     @Transactional
     public ResponseEntity<Object> deletarComponentePorId(@RequestParam("id") Long id, HttpServletRequest req) {
-        logger.info("Deletando componente por id");
+        logger.info("Deletando componente por id" + id);
 
         Resposta resposta = new Resposta();
-        resposta.setMensagem("Produto deletado com sucesso");
+        resposta.setMensagem("Componente deletado com sucesso" + id);
         resposta.setStatus(HttpStatus.OK);
         resposta.setCaminho(req.getRequestURI());
         resposta.setMetodo(req.getMethod());
@@ -162,4 +163,21 @@ public class APIComponentesController {
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
+    @ExceptionHandler(ExceptionLogger.class)
+    public ResponseEntity<String> handleProdutoNotFoundException(ExceptionLogger ex) {
+        logger.error("Erro: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        logger.error("Erro de integridade de dados: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro de integridade de dados: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception ex) {
+        logger.error("Erro interno: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno: " + ex.getMessage());
+    }
 }

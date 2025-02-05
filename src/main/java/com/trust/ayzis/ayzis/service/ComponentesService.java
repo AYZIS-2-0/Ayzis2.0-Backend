@@ -21,7 +21,7 @@ public class ComponentesService implements IComponentesService {
 
     @Override
     public Optional<Componentes> buscarPorId(Long id) {
-        logger.info("Buscando componente por id");
+        logger.info("Buscando componente por id" + id);
 
         Optional<Componentes> componente = componentesRepository.findById(id);
         return componente;
@@ -29,7 +29,7 @@ public class ComponentesService implements IComponentesService {
 
     @Override
     public List<Componentes> buscarPorProdutoComposto(Produto produtoComposto) {
-        logger.info("Buscando componentes por produto composto: " + produtoComposto);
+        logger.info("Buscando componentes por produto composto: " + produtoComposto.getId());
 
         List<Componentes> componentes = componentesRepository.findByProdutoComposto(produtoComposto);
         return componentes;
@@ -37,7 +37,7 @@ public class ComponentesService implements IComponentesService {
 
     @Override
     public List<Componentes> buscarPorProdutoComponente(Produto produtoComponente) {
-        logger.info("Buscando componentes por produto componente: " + produtoComponente);
+        logger.info("Buscando componentes por produto componente: " + produtoComponente.getId());
 
         List<Componentes> componentes = componentesRepository.findByProdutoComponente(produtoComponente);
         return componentes;
@@ -45,7 +45,7 @@ public class ComponentesService implements IComponentesService {
 
     @Override
     public Optional<Componentes> salvarComponente(Componentes componente) {
-        logger.info("Salvando componente");
+        logger.info("Salvando componente" + componente.getId());
 
         Optional<Componentes> componenteSalvo = Optional.of(componentesRepository.save(componente));
         return componenteSalvo;
@@ -53,7 +53,7 @@ public class ComponentesService implements IComponentesService {
 
     @Override
     public Optional<Componentes> atualizarComponente(Componentes componente) {
-        logger.info("Atualizando componente");
+        logger.info("Atualizando componente" + componente.getId());
 
         return componentesRepository.findById(componente.getId()).map(c -> {
             c.setProdutoComposto(componente.getProdutoComposto());
