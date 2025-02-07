@@ -114,9 +114,10 @@ public class APIVendaController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "vendas", params = {"sku", "mes"})
+    @GetMapping(value = "vendas", params = { "sku", "mes" })
     @Transactional
-    public ResponseEntity<Object> buscarVendasPorProdutoMes(@RequestParam("sku") String produtoId, @RequestParam("mes") String mes) {
+    public ResponseEntity<Object> buscarVendasPorProdutoMes(@RequestParam("sku") String produtoId,
+            @RequestParam("mes") String mes) {
         logger.info("Buscando vendas por produto id: " + produtoId + " e mês: " + mes);
 
         Optional<Produto> produtoOpt = produtoService.buscarPorId(produtoId);
@@ -146,10 +147,27 @@ public class APIVendaController {
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
         logger.info("Salvando venda: " + venda.getId());
 
-        if(vendaRespoitory.existsById(venda.getId())) {
+        // Verifica se o ID da venda está presente
+        if (venda.getId() == null || venda.getId().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID da venda não pode ser nulo ou vazio");
+        }
+
+        // Verifica se a venda já existe
+        if (vendaRespoitory.existsById(venda.getId())) {
             throw new ExceptionLogger("Venda já existe com o id: " + venda.getId());
         }
 
+        // Busca o produto pelo ID
+        Optional<Produto> produtoOpt = produtoService.buscarPorId(venda.getProduto().getId());
+        if (!produtoOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Produto não encontrado com o id: " + venda.getProduto().getId());
+        }
+
+        // Vincula o produto existente à venda
+        venda.setProduto(produtoOpt.get());
+
+        // Salva a venda
         Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
         return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
     }
