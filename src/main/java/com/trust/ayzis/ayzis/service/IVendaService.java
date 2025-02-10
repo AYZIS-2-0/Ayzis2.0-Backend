@@ -5,6 +5,8 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Venda;
 
@@ -21,7 +23,7 @@ public interface IVendaService {
 
     public List<Venda> buscarPorStatus(String status);
 
-    public List<Venda> buscarTodasVendas();
+    public List<Venda> buscarTodasVendas(Pageable pageable);
 
     public Optional<Venda> salvarVenda(Venda venda);
 

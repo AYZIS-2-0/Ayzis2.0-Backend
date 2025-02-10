@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.trust.ayzis.ayzis.model.IVendaRepository;
@@ -78,10 +79,10 @@ public class VendaService implements IVendaService {
     }
 
     @Override
-    public List<Venda> buscarTodasVendas() {
+    public List<Venda> buscarTodasVendas(Pageable pageable) {
         logger.info("Buscando todas as vendas");
 
-        List<Venda> vendas = vendaRepository.findAll();
+        List<Venda> vendas = vendaRepository.findAll(pageable).getContent();
         return vendas;
     }
 

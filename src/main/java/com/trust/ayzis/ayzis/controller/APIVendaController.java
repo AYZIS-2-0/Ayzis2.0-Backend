@@ -12,6 +12,8 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -53,10 +55,15 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping("/vendas")
     @Transactional
-    public ResponseEntity<Object> buscarTodos() {
+    public ResponseEntity<Object> buscarTodos(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit) {
         logger.info("Buscando todas as vendas");
 
-        return ResponseEntity.status(HttpStatus.OK).body(vendaService.buscarTodasVendas());
+        Pageable pageable = PageRequest.of(page, limit);
+
+        List<Venda> vendas = vendaService.buscarTodasVendas(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(vendas);
     }
 
     @CrossOrigin
@@ -145,7 +152,7 @@ public class APIVendaController {
     @PostMapping("/vendas")
     @Transactional
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
-        logger.info("Salvando venda: " + venda.getId());
+        logger.info(">>> Salvando venda: " + venda.getId());
 
         // Verifica se o ID da venda está presente
         if (venda.getId() == null || venda.getId().isEmpty()) {
