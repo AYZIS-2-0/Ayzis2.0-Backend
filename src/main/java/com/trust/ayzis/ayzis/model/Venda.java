@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -20,17 +21,28 @@ public class Venda {
     private String descStatus;
     private Integer quantidade;
     private Double valorTotal;
+    private String origem;
 
     @ManyToOne
     private Produto produto;
 
+    @ManyToOne
+    @JsonIgnore
+    private ProdInfo prodInfo;
 
     // Getters and Setters
 
     public Venda() {
     }
 
-    public Venda(String id, Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal,
+    public Venda(
+            String id,
+            Date dataVenda,
+            String status,
+            String descStatus,
+            Integer quantidade,
+            Double valorTotal,
+            String origem,
             Produto produto) {
         this.id = id;
         this.dataVenda = dataVenda;
@@ -39,6 +51,7 @@ public class Venda {
         this.quantidade = quantidade;
         this.valorTotal = valorTotal;
         this.produto = produto;
+        this.origem = origem;
     }
 
     public String getId() {
@@ -87,6 +100,14 @@ public class Venda {
 
     public void setValorTotal(Double valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public String getOrigem() {
+        return this.origem;
+    }
+
+    public void setOrigem(String origem) {
+        this.origem = origem;
     }
 
     public Produto getProduto() {

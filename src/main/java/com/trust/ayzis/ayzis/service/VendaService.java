@@ -106,6 +106,7 @@ public class VendaService implements IVendaService {
             venda.setQuantidade(newVenda.getQuantidade());
             venda.setValorTotal(newVenda.getValorTotal());
             venda.setProduto(newVenda.getProduto());
+            venda.setOrigem(newVenda.getOrigem());
 
             return vendaRepository.save(venda);
         });

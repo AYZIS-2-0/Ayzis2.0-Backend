@@ -1,18 +1,18 @@
 package com.trust.ayzis.ayzis.service;
 
+import java.sql.Date;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.sql.Date;
-import java.util.List;
-import java.util.Optional;
-
+import com.trust.ayzis.ayzis.model.Componentes;
 import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
-import com.trust.ayzis.ayzis.model.Componentes;
 import com.trust.ayzis.ayzis.model.Venda;
 
 @Configuration
@@ -29,10 +29,10 @@ public class LoadDatabase {
             Produto produto3 = new Produto("772040/41NOVA", "PAR BANDEJA NOVA DIANTEIRA HILUX 2005 A 2015 COM PIVÔ",
                     null, "FORTIKIT", "Produto", "Novo", 1169.23, 20.0, 10.0, 20.0, 700.0, "Par", false, null);
 
-            Venda venda1 = new Venda("1", Date.valueOf("2021-01-01"), "Pendente", "Venda pendente", 1, 664.58, produto1);
-            Venda venda2 = new Venda("2", Date.valueOf("2021-02-01"), "Pendente", "Venda pendente", 1, 664.58, produto2);
-            Venda venda3 = new Venda("3", Date.valueOf("2021-01-02"), "Pendente", "Venda pendente", 1, 1169.23, produto3);
-            Venda venda4 = new Venda("4", Date.valueOf("2021-02-02"), "Pendente", "Venda pendente", 1, 1169.23, produto3);
+            Venda venda1 = new Venda("1", Date.valueOf("2021-01-01"), "Pendente", "Venda pendente", 1, 664.58, "Mercado Livre",produto1);
+            Venda venda2 = new Venda("2", Date.valueOf("2021-02-01"), "Pendente", "Venda pendente", 1, 664.58, "Mercado Livre",produto2);
+            Venda venda3 = new Venda("3", Date.valueOf("2021-01-02"), "Pendente", "Venda pendente", 1, 1169.23, "Mercado Livre", produto3);
+            Venda venda4 = new Venda("4", Date.valueOf("2021-02-02"), "Pendente", "Venda pendente", 1, 1169.23, "Mercado Livre", produto3);
             
             Componentes produtoComposicao1 = new Componentes(produto3, produto1, 1);
             Componentes produtoComposicao2 = new Componentes(produto3, produto2, 1);
