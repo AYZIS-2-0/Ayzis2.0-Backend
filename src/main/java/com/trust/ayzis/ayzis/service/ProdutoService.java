@@ -58,6 +58,13 @@ public class ProdutoService implements IProdutoService {
         return produtos;
     }
 
+    public List<Produto> buscarTodosProdutos() {
+        logger.info("Buscando todos os produtos");
+
+        List<Produto> produtos = produtoRepository.findAll();
+        return produtos;
+    }
+
     @Override
     public Optional<Produto> salvarProduto(Produto produto) {
         logger.info("Salvando produto: " + produto.getId());

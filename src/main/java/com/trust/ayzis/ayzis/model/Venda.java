@@ -20,6 +20,7 @@ public class Venda {
     private String descStatus;
     private Integer quantidade;
     private Double valorTotal;
+    private String origem;
 
     @ManyToOne
     private Produto produto;
@@ -30,7 +31,7 @@ public class Venda {
     public Venda() {
     }
 
-    public Venda(String id, Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal,
+    public Venda(String id, Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal, String origem,
             Produto produto) {
         this.id = id;
         this.dataVenda = dataVenda;
@@ -38,6 +39,7 @@ public class Venda {
         this.descStatus = descStatus;
         this.quantidade = quantidade;
         this.valorTotal = valorTotal;
+        this.origem = origem;
         this.produto = produto;
     }
 
@@ -87,6 +89,14 @@ public class Venda {
 
     public void setValorTotal(Double valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public String getOrigem() {
+        return this.origem;
+    }
+
+    public void setOrigem(String origem) {
+        this.origem = origem;
     }
 
     public Produto getProduto() {

@@ -16,6 +16,8 @@ public interface IProdutoService {
 
     public List<Produto> buscarTodosProdutos(Pageable pageable);
 
+    public List<Produto> buscarTodosProdutos();
+
     public Optional<Produto> salvarProduto(Produto produto);
 
     public Optional<Produto> atualizarProduto(Produto produto);

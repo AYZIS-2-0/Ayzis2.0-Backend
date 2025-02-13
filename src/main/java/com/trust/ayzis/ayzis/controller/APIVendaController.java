@@ -67,6 +67,17 @@ public class APIVendaController {
     }
 
     @CrossOrigin
+    @GetMapping("/vendas/all")
+    @Transactional
+    public ResponseEntity<Object> buscarTodos() {
+        logger.info("Buscando todas as vendas");
+
+        List<Venda> vendas = vendaService.buscarTodasVendas();
+
+        return ResponseEntity.status(HttpStatus.OK).body(vendas);
+    }
+
+    @CrossOrigin
     @GetMapping(value = "vendas", params = "id")
     @Transactional
     public ResponseEntity<Object> buscarPorId(@RequestParam String id) {

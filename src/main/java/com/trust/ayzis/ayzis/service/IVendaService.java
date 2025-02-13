@@ -25,6 +25,8 @@ public interface IVendaService {
 
     public List<Venda> buscarTodasVendas(Pageable pageable);
 
+    public List<Venda> buscarTodasVendas();
+
     public Optional<Venda> salvarVenda(Venda venda);
 
     public Optional<Venda> atualizarVenda(Venda venda);

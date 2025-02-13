@@ -87,6 +87,14 @@ public class VendaService implements IVendaService {
     }
 
     @Override
+    public List<Venda> buscarTodasVendas() {
+        logger.info("Buscando todas as vendas");
+
+        List<Venda> vendas = vendaRepository.findAll();
+        return vendas;
+    }
+
+    @Override
     public Optional<Venda> salvarVenda(Venda venda) {
         logger.info("Salvando venda: " + venda.getId());
 
