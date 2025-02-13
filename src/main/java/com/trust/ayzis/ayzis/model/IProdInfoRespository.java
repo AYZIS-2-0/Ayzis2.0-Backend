@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import io.micrometer.common.lang.NonNull;
 
-public interface IProdInfoRespository extends JpaRepository<ProdInfo, String> {
+public interface IProdInfoRespository extends JpaRepository<ProdInfo, Integer> {
     
     public Optional<ProdInfo> findById(String id);
 
