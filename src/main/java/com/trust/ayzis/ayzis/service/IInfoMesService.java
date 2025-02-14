@@ -8,7 +8,7 @@ import com.trust.ayzis.ayzis.model.InfoMes;
 import com.trust.ayzis.ayzis.model.Produto;
 
 public interface IInfoMesService {
-    public Optional<InfoMes> buscarPorId(int id);
+    public Optional<InfoMes> buscarPorId(Long id);
 
     public List<InfoMes> buscarPorProduto(Produto produto);
 
@@ -18,7 +18,7 @@ public interface IInfoMesService {
 
     public List<InfoMes> buscarPorProdutoMesAnoEntre(Produto produto, Date inicio, Date fim);
 
-    public void calcInfoMes(InfoMes infoMes);
+    public void calcInfoMes();
 
-    public void deletarPorId(int id);    
+    public void deletarPorId(Long id);    
 }

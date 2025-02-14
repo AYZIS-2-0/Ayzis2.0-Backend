@@ -32,6 +32,7 @@ import com.trust.ayzis.ayzis.model.IVendaRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.model.Venda;
+import com.trust.ayzis.ayzis.service.IInfoMesService;
 import com.trust.ayzis.ayzis.service.IProdutoService;
 import com.trust.ayzis.ayzis.service.IVendaService;
 
@@ -51,6 +52,10 @@ public class APIVendaController {
 
     @Autowired
     IVendaRepository vendaRespoitory;
+
+    
+    @Autowired
+    IInfoMesService infoMesService;
 
     @CrossOrigin
     @GetMapping("/vendas")
@@ -195,6 +200,8 @@ public class APIVendaController {
     @Transactional
     public ResponseEntity<Object> atualizar(@RequestBody Venda venda) {
         logger.info("Atualizando venda" + venda.getId());
+
+
 
         return ResponseEntity.status(HttpStatus.OK).body(vendaService.atualizarVenda(venda));
     }
