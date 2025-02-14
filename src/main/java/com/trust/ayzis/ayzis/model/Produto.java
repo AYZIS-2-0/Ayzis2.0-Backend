@@ -10,6 +10,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Produto {
@@ -36,6 +37,10 @@ public class Produto {
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Venda> vendas;
+
+    @OneToOne
+    @JsonIgnore
+    private InfoMes infoMes;
 
     public Produto() {
     }

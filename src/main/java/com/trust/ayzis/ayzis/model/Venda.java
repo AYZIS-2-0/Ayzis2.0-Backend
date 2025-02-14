@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Venda {
@@ -24,6 +25,10 @@ public class Venda {
 
     @ManyToOne
     private Produto produto;
+
+    @ManyToOne
+    @JsonIgnore
+    private InfoMes infoMes;
 
 
     // Getters and Setters
