@@ -41,6 +41,15 @@ public class APIInfoMesController {
     }
 
     @CrossOrigin
+    @GetMapping("/infoMes")
+    public ResponseEntity<Object> buscarTodos() {
+        logger.info("Buscando todos os infoMes");
+
+        List<InfoMes> infoMes = infoMesService.buscarTodos();
+        return ResponseEntity.status(HttpStatus.OK).body(infoMes);
+    }
+
+    @CrossOrigin
     @GetMapping(value = "/infoMes", params = "produto")
     public ResponseEntity<Object> buscarPorProduto(@RequestParam Produto produto) {
         logger.info("Buscando infoMes por produto: " + produto);

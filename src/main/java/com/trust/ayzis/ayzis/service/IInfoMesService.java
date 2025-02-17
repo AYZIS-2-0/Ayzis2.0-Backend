@@ -10,6 +10,8 @@ import com.trust.ayzis.ayzis.model.Produto;
 public interface IInfoMesService {
     public Optional<InfoMes> buscarPorId(Long id);
 
+    public List<InfoMes> buscarTodos();
+
     public List<InfoMes> buscarPorProduto(Produto produto);
 
     public List<InfoMes> buscarPorMesAno(Date mesAno);

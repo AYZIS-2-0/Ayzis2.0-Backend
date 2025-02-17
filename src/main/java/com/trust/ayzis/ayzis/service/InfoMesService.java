@@ -46,6 +46,12 @@ public class InfoMesService implements IInfoMesService {
     }
 
     @Override
+    public List<InfoMes> buscarTodos() {
+        logger.info("Buscando todos os infoMes");
+        return infoMesRepository.findAll();
+    }
+
+    @Override
     public List<InfoMes> buscarPorProduto(Produto produto) {
         logger.info("Buscando infoMes por produto: {}", produto.getId());
         return infoMesRepository.findByProduto(produto);
@@ -73,12 +79,19 @@ public class InfoMesService implements IInfoMesService {
     public void calcInfoMes() {
         logger.info("Calculando infoMes");
         List<Produto> produtos = produtoRepository.findAll();
+        logger.info("Obtendo {} Produtos", produtos.size());
 
+        logger.info("Iterando sobre produtos");
         for (Produto produto : produtos) {
-            List<Venda> vendas = vendaRepository.findByProduto(produto);
+            logger.info("Produto: {}", produto.getId());
 
+            List<Venda> vendas = vendaRepository.findByProduto(produto);
+            logger.info("Obtendo {} Vendas", vendas.size());
+
+            logger.info("Iterando sobre Vendas produtos");
             for (Venda venda : vendas) {
-                if (produto.getProdutosComposicao() == null || produto.getProdutosComposicao().isEmpty()) {
+                logger.info("Venda: {}", venda.getId());
+                if (produto.getProdutosComposicao() == null || produto.getProdutosComposicao().stream().noneMatch(componente -> componente != null)) {
                     processarProdutoComComponentes(produto, venda);
                 } else {
                     processarProdutoSemComponentes(produto, venda);
@@ -94,29 +107,43 @@ public class InfoMesService implements IInfoMesService {
             logger.info("Componente: {}", componente.getId());
 
             InfoMes infoMes = createInfoMesByComp(componente, venda);
+            logger.info("Criado InfoMes para Componente: {}", infoMes.getId());
+
             atualizarInfoMes(infoMes, venda, componente.getQuantidade());
             infoMesRepository.save(infoMes);
+            logger.info("InfoMes salvo: {}", infoMes.getId());
         }
     }
 
     private void processarProdutoSemComponentes(Produto produto, Venda venda) {
+        logger.info("Processando Produto sem Componentes: {}", produto.getId());
         InfoMes infoMes = createInfoMes(produto, venda);
+        logger.info("Criado InfoMes: {}", infoMes.getId());
+
         atualizarInfoMes(infoMes, venda, 1);
         infoMesRepository.save(infoMes);
+        logger.info("InfoMes salvo: {}", infoMes.getId());
     }
 
     private void atualizarInfoMes(InfoMes infoMes, Venda venda, int quantidade) {
+        logger.info("Atualizando InfoMes: {}", infoMes.getId());
+        logger.info("Venda: {}, Quantidade: {}", venda.getId(), quantidade);
+
         if (venda.getOrigem().equals("ML")) {
             if (isVendaEntregue(venda)) {
                 infoMes.setComponente(infoMes.getComponente() + (venda.getQuantidade() * quantidade));
+                logger.info("Venda entregue, atualizando componente: {}", infoMes.getComponente());
             } else if (venda.getStatus().equals(STATUS_A_CAMINHO)) {
                 infoMes.setPendenteComponente(infoMes.getComponente() + (venda.getQuantidade() * quantidade));
+                logger.info("Venda a caminho, atualizando pendente componente: {}", infoMes.getPendenteComponente());
             } else {
                 infoMes.setCanceladoComponente(infoMes.getComponente() + (venda.getQuantidade() * quantidade));
+                logger.info("Venda cancelada, atualizando cancelado componente: {}", infoMes.getCanceladoComponente());
             }
         } else {
             if (isVendaEntregue(venda)) {
                 infoMes.setDireta(infoMes.getDireta() + (venda.getQuantidade() * quantidade));
+                logger.info("Venda direta entregue, atualizando direta: {}", infoMes.getDireta());
             }
         }
 
@@ -125,6 +152,9 @@ public class InfoMesService implements IInfoMesService {
                 infoMes.getCanceladoTotal() + infoMes.getPendenteIndividual() + infoMes.getPendenteComponente());
         infoMes.setCanceladoTotal(
                 infoMes.getCanceladoTotal() + infoMes.getCanceladoIndividual() + infoMes.getCanceladoComponente());
+
+        logger.info("InfoMes atualizado: Total: {}, Pendente Total: {}, Cancelado Total: {}",
+                infoMes.getTotal(), infoMes.getPendenteTotal(), infoMes.getCanceladoTotal());
     }
 
     private boolean isVendaEntregue(Venda venda) {

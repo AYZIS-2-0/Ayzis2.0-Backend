@@ -3,6 +3,7 @@ package com.trust.ayzis.ayzis.model;
 import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -36,11 +37,10 @@ public class InfoMes {
     private int canceladoTotal;
 
     @OneToOne(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private Produto produto;
 
     @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Venda> venda;
 
     public InfoMes() {
