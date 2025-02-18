@@ -86,12 +86,18 @@ public class InfoMesService implements IInfoMesService {
             logger.info("Produto: {}", produto.getId());
 
             List<Venda> vendas = vendaRepository.findByProduto(produto);
-            logger.info("Obtendo {} Vendas", vendas.size());
+            logger.info("Obtendo {} Vendas do Produto", vendas.size());
 
-            logger.info("Iterando sobre Vendas produtos");
+            if (vendas.isEmpty()) {
+                logger.info("Nenhuma venda encontrada para o produto: {}", produto.getId());
+                continue;
+            }
+
+            logger.info("Iterando sobre Vendas");
             for (Venda venda : vendas) {
                 logger.info("Venda: {}", venda.getId());
-                if (produto.getProdutosComposicao() == null || produto.getProdutosComposicao().stream().noneMatch(componente -> componente != null)) {
+                if (produto.getProdutosComposicao() == null
+                        || produto.getProdutosComposicao().stream().noneMatch(componente -> componente != null)) {
                     processarProdutoComComponentes(produto, venda);
                 } else {
                     processarProdutoSemComponentes(produto, venda);
@@ -107,7 +113,8 @@ public class InfoMesService implements IInfoMesService {
             logger.info("Componente: {}", componente.getId());
 
             InfoMes infoMes = createInfoMesByComp(componente, venda);
-            logger.info("Criado InfoMes para Componente: {}", infoMes.getId());
+            logger.info("Criado InfoMes {} para o produto {} na data {}", infoMes.getId(), infoMes.getProduto().getId(),
+                    infoMes.getMonthYear());
 
             atualizarInfoMes(infoMes, venda, componente.getQuantidade());
             infoMesRepository.save(infoMes);
@@ -118,7 +125,8 @@ public class InfoMesService implements IInfoMesService {
     private void processarProdutoSemComponentes(Produto produto, Venda venda) {
         logger.info("Processando Produto sem Componentes: {}", produto.getId());
         InfoMes infoMes = createInfoMes(produto, venda);
-        logger.info("Criado InfoMes: {}", infoMes.getId());
+        logger.info("Criado InfoMes {} para o produto {} na data {}", infoMes.getId(), infoMes.getProduto().getId(),
+                infoMes.getMonthYear());
 
         atualizarInfoMes(infoMes, venda, 1);
         infoMesRepository.save(infoMes);
@@ -163,13 +171,15 @@ public class InfoMesService implements IInfoMesService {
     }
 
     public InfoMes createInfoMesByComp(Componentes componente, Venda venda) {
+        logger.info("Criado InfoMes para Componente: {}", componente.getId());
+
         return infoMesRepository
                 .findByProdutoAndMonthYear(componente.getProdutoComponente(),
                         venda.getDataVenda().toLocalDate().getMonthValue(),
                         venda.getDataVenda().toLocalDate().getYear())
                 .orElseGet(() -> {
                     InfoMes infoMesNovo = new InfoMes();
-                    infoMesNovo.setMonthYear(venda.getDataVenda());
+                    infoMesNovo.setMonthYear(Date.valueOf(venda.getDataVenda().toLocalDate().withDayOfMonth(1)));
                     infoMesNovo.setProduto(componente.getProdutoComponente());
                     infoMesNovo.setVenda(List.of(venda));
                     logger.info("InfoMesVenda: {}", infoMesNovo.getId());
@@ -180,13 +190,15 @@ public class InfoMesService implements IInfoMesService {
     }
 
     public InfoMes createInfoMes(Produto produto, Venda venda) {
+
+        logger.info("Criado InfoMes para Componente: {}", produto.getId());
         return infoMesRepository
                 .findByProdutoAndMonthYear(produto,
                         venda.getDataVenda().toLocalDate().getMonthValue(),
                         venda.getDataVenda().toLocalDate().getYear())
                 .orElseGet(() -> {
                     InfoMes infoMesNovo = new InfoMes();
-                    infoMesNovo.setMonthYear(venda.getDataVenda());
+                    infoMesNovo.setMonthYear(Date.valueOf(venda.getDataVenda().toLocalDate().withDayOfMonth(1)));
                     infoMesNovo.setProduto(produto);
                     infoMesNovo.setVenda(List.of(venda));
                     logger.info("InfoMesVenda: {}", infoMesNovo.getId());

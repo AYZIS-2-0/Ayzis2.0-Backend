@@ -24,7 +24,7 @@ public interface IInfoMesRepository extends JpaRepository<InfoMes, Long> {
 
     List<InfoMes> findByProdutoAndMonthYearBetween(Produto produto, Date inicio, Date fim);
 
-    @Query("SELECT i FROM InfoMes i WHERE i.produto = :produto AND MONTH(i.monthYear) = :month AND YEAR(i.monthYear) = :year")
+    @Query("SELECT i FROM InfoMes i WHERE i.produto = :produto AND FUNCTION('MONTH', i.monthYear) = :month AND FUNCTION('YEAR', i.monthYear) = :year")
     public Optional<InfoMes> findByProdutoAndMonthYear(Produto produto, @Param("month") int month, @Param("year") int year);
 
     void deleteById(Long id);

@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
@@ -18,7 +19,7 @@ import jakarta.persistence.OneToOne;
 public class InfoMes {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private Date monthYear;
@@ -36,7 +37,8 @@ public class InfoMes {
     private int canceladoComponente;
     private int canceladoTotal;
 
-    @OneToOne(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
+    @JsonManagedReference
     private Produto produto;
 
     @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)

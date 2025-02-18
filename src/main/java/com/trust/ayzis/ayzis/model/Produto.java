@@ -38,8 +38,8 @@ public class Produto {
     @JsonIgnore
     private List<Venda> vendas;
 
-    @OneToOne
-    @JsonIgnore
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private InfoMes infoMes;
 
     public Produto() {
