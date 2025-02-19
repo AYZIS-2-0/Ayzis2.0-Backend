@@ -1,6 +1,7 @@
 package com.trust.ayzis.ayzis.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -17,7 +18,7 @@ import jakarta.persistence.OneToOne;
 
 @Entity
 public class InfoMes {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -38,19 +39,31 @@ public class InfoMes {
     private int canceladoTotal;
 
     @ManyToOne
-    @JsonManagedReference
     private Produto produto;
 
-    @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
-    private List<Venda> venda;
+    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Venda> vendaDireta;
+
+    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Venda> vendaConluida;
+
+    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Venda> vendaPendente;
+
+    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Venda> vendaCancelada;
 
     public InfoMes() {
     }
 
     public InfoMes(Date monthYear, int individual, int componente, int direta, int total, int pendenteIndividual,
             int pendenteComponente, int pendenteTotal, int canceladoIndividual, int canceladoComponente,
-            int canceladoTotal, Produto produto, List<Venda> venda) {
+            int canceladoTotal, Produto produto, List<Venda> venda, List<Venda> vendaPendente,
+            List<Venda> vendaCancelada, List<Venda> vendaDireta) {
         this.monthYear = monthYear;
         this.individual = individual;
         this.componente = componente;
@@ -63,11 +76,13 @@ public class InfoMes {
         this.canceladoComponente = canceladoComponente;
         this.canceladoTotal = canceladoTotal;
         this.produto = produto;
-        this.venda = venda;
+        this.vendaConluida = new ArrayList<>(venda);
+        this.vendaPendente = new ArrayList<>(venda);
+        this.vendaCancelada = new ArrayList<>(venda);
+        this.vendaDireta = new ArrayList<>(venda);
     }
 
     // Getters and Setters
-
 
     public Long getId() {
         return this.id;
@@ -173,11 +188,35 @@ public class InfoMes {
         this.produto = produto;
     }
 
-    public List<Venda> getVenda() {
-        return this.venda;
+    public List<Venda> getVendasConcluidas() {
+        return this.vendaConluida;
     }
 
-    public void setVenda(List<Venda> venda) {
-        this.venda = venda;
+    public void setVendasConcluidas(List<Venda> venda) {
+        this.vendaConluida = venda;
+    }
+
+    public List<Venda> getVendasPendentes() {
+        return this.vendaPendente;
+    }
+
+    public void setVendasPendentes(List<Venda> venda) {
+        this.vendaPendente = venda;
+    }
+
+    public List<Venda> getVendasCanceladas() {
+        return this.vendaCancelada;
+    }
+
+    public void setVendasCanceladas(List<Venda> venda) {
+        this.vendaCancelada = venda;
+    }
+
+    public List<Venda> getVendasDiretas() {
+        return this.vendaDireta;
+    }
+
+    public void setVendasDiretas(List<Venda> venda) {
+        this.vendaDireta = venda;
     }
 }

@@ -20,7 +20,7 @@ public interface IInfoMesService {
 
     public List<InfoMes> buscarPorProdutoMesAnoEntre(Produto produto, Date inicio, Date fim);
 
-    public void calcInfoMes();
+    public void calcAllInfoMes();
 
     public void deletarPorId(Long id);    
 }

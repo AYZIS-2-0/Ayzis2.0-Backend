@@ -122,7 +122,7 @@ public class APIInfoMesController {
     public ResponseEntity<Object> calcInfoMes() {
         logger.info("Calculando infoMes");
 
-        infoMesService.calcInfoMes();
+        infoMesService.calcAllInfoMes();
         return ResponseEntity.status(HttpStatus.OK).body("InfoMes calculado com sucesso.");
     }
 

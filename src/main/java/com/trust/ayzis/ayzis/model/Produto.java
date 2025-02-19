@@ -39,8 +39,8 @@ public class Produto {
     private List<Venda> vendas;
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
-    private InfoMes infoMes;
+    @JsonIgnore
+    private List<InfoMes> infoMes;
 
     public Produto() {
     }
