@@ -28,8 +28,13 @@ public class InfoMesService implements IInfoMesService {
     private static final String STATUS_MEDIACAO_FINALIZADA = "Mediação finalizada. Te demos o dinheiro.";
     private static final String STATUS_A_CAMINHO = "A caminho";
 
+    @Autowired
     private IInfoMesRepository infoMesRepository;
+
+    @Autowired
     private IProdutoRepository produtoRepository;
+
+    @Autowired
     private IVendaRepository vendaRepository;
 
     @Override
@@ -107,7 +112,7 @@ public class InfoMesService implements IInfoMesService {
             logger.info("Criado InfoMes {} para o produto {} na data {}", infoMes.getId(), infoMes.getProduto().getId(),
                     infoMes.getMonthYear());
 
-            atualizarInfoMes(infoMes, venda, componente.getQuantidade());
+            attVendaListInfoMes(infoMes, venda);
             infoMesRepository.save(infoMes);
             logger.info("InfoMes salvo: {}", infoMes.getId());
         }
@@ -119,44 +124,9 @@ public class InfoMesService implements IInfoMesService {
         logger.info("Criado InfoMes {} para o produto {} na data {}", infoMes.getId(), infoMes.getProduto().getId(),
                 infoMes.getMonthYear());
 
-        atualizarInfoMes(infoMes, venda, 1);
+        attVendaListInfoMes(infoMes, venda);
         infoMesRepository.save(infoMes);
         logger.info("InfoMes salvo: {}", infoMes.getId());
-    }
-
-    private void atualizarInfoMes(InfoMes infoMes, Venda venda, int quantidade) {
-        logger.info("Atualizando InfoMes: {}", infoMes.getId());
-        logger.info("Venda: {}, Quantidade: {}", venda.getId(), quantidade);
-
-        if (venda.getOrigem().equals("ML")) {
-            if (isVendaEntregue(venda)) {
-                infoMes.setVendasConcluidas(new ArrayList<>(List.of(venda)));
-                infoMes.setComponente(infoMes.getComponente() + (venda.getQuantidade() * quantidade));
-                logger.info("Venda entregue, atualizando componente: {}", infoMes.getComponente());
-            } else if (venda.getStatus().equals(STATUS_A_CAMINHO)) {
-                infoMes.setVendasPendentes(new ArrayList<>(List.of(venda)));
-                infoMes.setPendenteComponente(infoMes.getPendenteComponente() + (venda.getQuantidade() * quantidade));
-                logger.info("Venda a caminho, atualizando pendente componente: {}", infoMes.getPendenteComponente());
-            } else {
-                infoMes.setVendasCanceladas(new ArrayList<>(List.of(venda)));
-                infoMes.setCanceladoComponente(infoMes.getCanceladoComponente() + (venda.getQuantidade() * quantidade));
-                logger.info("Venda cancelada, atualizando cancelado componente: {}", infoMes.getCanceladoComponente());
-            }
-        } else {
-            if (isVendaEntregue(venda)) {
-                infoMes.setVendasDiretas(new ArrayList<>(List.of(venda)));
-                int vendasDiretas = 0;
-                infoMes.setDireta(infoMes.getDireta() + (venda.getQuantidade() * quantidade));
-                logger.info("Venda direta entregue, atualizando direta: {}", infoMes.getDireta());
-            }
-        }
-
-        infoMes.setTotal(infoMes.getIndividual() + infoMes.getComponente() + infoMes.getDireta());
-        infoMes.setPendenteTotal(infoMes.getPendenteIndividual() + infoMes.getPendenteComponente());
-        infoMes.setCanceladoTotal(infoMes.getCanceladoIndividual() + infoMes.getCanceladoComponente());
-
-        logger.info("InfoMes atualizado: Total: {}, Pendente Total: {}, Cancelado Total: {}",
-                infoMes.getTotal(), infoMes.getPendenteTotal(), infoMes.getCanceladoTotal());
     }
 
     private boolean isVendaEntregue(Venda venda) {
@@ -165,7 +135,7 @@ public class InfoMesService implements IInfoMesService {
     }
 
     public InfoMes createInfoMes(Produto produto, Venda venda) {
-        logger.info("Criado InfoMes para o Produto: {}", produto.getId());
+        logger.info("Criando InfoMes para o Produto: {}", produto.getId());
 
         return infoMesRepository
                 .findByProdutoAndMonthYear(produto,
@@ -174,12 +144,120 @@ public class InfoMesService implements IInfoMesService {
                 .orElseGet(() -> {
                     InfoMes infoMesNovo = new InfoMes();
                     infoMesNovo.setMonthYear(Date.valueOf(venda.getDataVenda().toLocalDate().withDayOfMonth(1)));
-                    infoMesNovo.setProduto(produto); // Garante que a lista seja mutável
+                    infoMesNovo.setProduto(produto);
+                    infoMesNovo.setVendasConcluidas(new ArrayList<>());
+                    infoMesNovo.setVendasPendentes(new ArrayList<>());
+                    infoMesNovo.setVendasCanceladas(new ArrayList<>());
+                    infoMesNovo.setVendasDiretas(new ArrayList<>());
                     logger.info("InfoMesVenda: {}", infoMesNovo.getId());
                     logger.info("Data: {}-{}", venda.getDataVenda().toLocalDate().getMonthValue(),
                             venda.getDataVenda().toLocalDate().getYear());
                     return infoMesNovo;
                 });
+    }
+
+    private void attVendaListInfoMes(InfoMes infoMes, Venda venda) {
+        logger.info("Atualizando InfoMes: {}", infoMes.getId());
+        logger.info("Venda: {}", venda.getId());
+
+        if (venda.getOrigem().equals("ML")) {
+            if (isVendaEntregue(venda)) {
+                if (infoMes.getVendasPendentes().contains(venda)) {
+                    infoMes.getVendasPendentes().remove(venda);
+                } else if (infoMes.getVendasCanceladas().contains(venda)) {
+                    infoMes.getVendasCanceladas().remove(venda);
+                }
+                infoMes.getVendasConcluidas().add(venda);
+                recalcVendas(infoMes, infoMes.getVendasConcluidas(), "concluídas");
+            } else if (venda.getStatus().equals(STATUS_A_CAMINHO)) {
+                if (infoMes.getVendasConcluidas().contains(venda)) {
+                    infoMes.getVendasConcluidas().remove(venda);
+                } else if (infoMes.getVendasCanceladas().contains(venda)) {
+                    infoMes.getVendasCanceladas().remove(venda);
+                }
+                infoMes.getVendasPendentes().add(venda);
+                recalcVendas(infoMes, infoMes.getVendasPendentes(), "pendentes");
+            } else {
+                if (infoMes.getVendasConcluidas().contains(venda)) {
+                    infoMes.getVendasConcluidas().remove(venda);
+                } else if (infoMes.getVendasPendentes().contains(venda)) {
+                    infoMes.getVendasPendentes().remove(venda);
+                }
+                infoMes.getVendasCanceladas().add(venda);
+                recalcVendas(infoMes, infoMes.getVendasCanceladas(), "canceladas");
+            }
+        } else {
+            if (isVendaEntregue(venda)) {
+                infoMes.getVendasDiretas().add(venda);
+                recalcVendas(infoMes, infoMes.getVendasDiretas(), "diretas");
+            }
+        }
+
+        logger.info("InfoMes atualizado: Total: {}, Pendente Total: {}, Cancelado Total: {}",
+                infoMes.getTotal(), infoMes.getPendenteTotal(), infoMes.getCanceladoTotal());
+    }
+
+    private void recalcVendas(InfoMes infoMes, List<Venda> vendas, String tipo) {
+        logger.info("Recalculando Vendas {}: {}", tipo, infoMes.getId());
+
+        int individual = 0;
+        int componente = 0;
+        int pendenteIndividual = 0;
+        int pendenteComponente = 0;
+        int canceladoIndividual = 0;
+        int canceladoComponente = 0;
+
+        logger.info("Iterando sobre Vendas {}", tipo);
+        for (Venda venda : vendas) {
+            if (venda.getProduto().getProdutosComposicao().isEmpty()
+                    || venda.getProduto().getProdutosComposicao() == null) {
+                logger.info("Produto sem Componentes: {}", venda.getProduto().getId());
+                if (tipo.equals("concluídas")) {
+                    individual += venda.getQuantidade();
+                } else if (tipo.equals("pendentes")) {
+                    pendenteIndividual += venda.getQuantidade();
+                } else if (tipo.equals("canceladas")) {
+                    canceladoIndividual += venda.getQuantidade();
+                }
+            } else {
+                logger.info("Produto com Componentes: {}", venda.getProduto().getId());
+                logger.info("Iterando sobre Componentes, e obtendo quantidade");
+                for (Componentes comp : venda.getProduto().getProdutosComposicao()) {
+                    if (comp.getProdutoComponente().getId() == infoMes.getProduto().getId()) {
+                        int quantidade = venda.getQuantidade() * comp.getQuantidade();
+                        if (tipo.equals("concluídas")) {
+                            componente += quantidade;
+                        } else if (tipo.equals("pendentes")) {
+                            pendenteComponente += quantidade;
+                        } else if (tipo.equals("canceladas")) {
+                            canceladoComponente += quantidade;
+                        }
+                        logger.info("Componente: {}, Quantidade: {}", comp.getProdutoComponente().getId(),
+                                comp.getQuantidade());
+                    }
+                }
+            }
+        }
+
+        if (tipo.equals("concluídas")) {
+            infoMes.setIndividual(individual);
+            infoMes.setComponente(componente);
+            infoMes.setTotal(infoMes.getIndividual() + infoMes.getComponente() + infoMes.getDireta());
+        } else if (tipo.equals("pendentes")) {
+            infoMes.setPendenteIndividual(pendenteIndividual);
+            infoMes.setPendenteComponente(pendenteComponente);
+            infoMes.setPendenteTotal(infoMes.getPendenteIndividual() + infoMes.getPendenteComponente());
+        } else if (tipo.equals("canceladas")) {
+            infoMes.setCanceladoIndividual(canceladoIndividual);
+            infoMes.setCanceladoComponente(canceladoComponente);
+            infoMes.setCanceladoTotal(infoMes.getCanceladoIndividual() + infoMes.getCanceladoComponente());
+        }
+
+        logger.info(
+                "InfoMes atualizado: Individual: {}, Componente: {}, Total: {}, Pendente Individual: {}, Pendente Componente: {}, Pendente Total: {}, Cancelado Individual: {}, Cancelado Componente: {}, Cancelado Total: {}",
+                infoMes.getIndividual(), infoMes.getComponente(), infoMes.getTotal(),
+                infoMes.getPendenteIndividual(), infoMes.getPendenteComponente(), infoMes.getPendenteTotal(),
+                infoMes.getCanceladoIndividual(), infoMes.getCanceladoComponente(), infoMes.getCanceladoTotal());
     }
 
     @Override

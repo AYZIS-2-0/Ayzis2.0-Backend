@@ -43,19 +43,19 @@ public class InfoMes {
 
     @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
     @JsonManagedReference
-    private List<Venda> vendaDireta;
+    private List<Venda> vendaDireta = new ArrayList<>();
 
     @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
     @JsonManagedReference
-    private List<Venda> vendaConluida;
+    private List<Venda> vendaConluida = new ArrayList<>();
 
     @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
     @JsonManagedReference
-    private List<Venda> vendaPendente;
+    private List<Venda> vendaPendente = new ArrayList<>();
 
     @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
     @JsonManagedReference
-    private List<Venda> vendaCancelada;
+    private List<Venda> vendaCancelada = new ArrayList<>();
 
     public InfoMes() {
     }
