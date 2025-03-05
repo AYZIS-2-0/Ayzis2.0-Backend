@@ -6,8 +6,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,9 +53,8 @@ public class APIVendaController {
     IProdutoService produtoService;
 
     @Autowired
-    IVendaRepository vendaRespoitory;
+    IVendaRepository vendaRepository;
 
-    
     @Autowired
     IInfoMesService infoMesService;
 
@@ -175,11 +176,6 @@ public class APIVendaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID da venda não pode ser nulo ou vazio");
         }
 
-        // Verifica se a venda já existe
-        if (vendaRespoitory.existsById(venda.getId())) {
-            throw new ExceptionLogger("Venda já existe com o id: " + venda.getId());
-        }
-
         // Busca o produto pelo ID
         Optional<Produto> produtoOpt = produtoService.buscarPorId(venda.getProduto().getId());
         if (!produtoOpt.isPresent()) {
@@ -187,12 +183,85 @@ public class APIVendaController {
                     .body("Produto não encontrado com o id: " + venda.getProduto().getId());
         }
 
+        // Verifica se a venda já existe
+        if (vendaRepository.existsById(venda.getId())) {
+            vendaService.atualizarVenda(venda);
+
+            infoMesService.recalcInfoMes(venda);
+
+            throw new ExceptionLogger("Venda já existe com o id: " + venda.getId() + ", atualizando venda");
+        }
+
         // Vincula o produto existente à venda
         venda.setProduto(produtoOpt.get());
 
         // Salva a venda
         Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
+        logger.info("Venda salva com sucesso: " + vendaSalva.get().getId());
+
+        infoMesService.recalcInfoMes(venda);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
+    }
+
+    @CrossOrigin
+    @PostMapping("/vendas/lote")
+    @Transactional
+    public ResponseEntity<Object> salvarVendasEmLote(@RequestBody List<Venda> vendas) {
+        logger.info(">>> Salvando vendas em lote");
+
+        if (vendas.size() > 500) {
+            logger.error("O lote não pode conter mais de 500 vendas");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O lote não pode conter mais de 500 vendas");
+        }
+
+        List<String> erros = new ArrayList<>();
+        List<Venda> vendasSalvas = new ArrayList<>();
+
+        for (Venda venda : vendas) {
+            try {
+                // Verifica se o ID da venda está presente
+                if (venda.getId() == null || venda.getId().isEmpty()) {
+                    logger.error("ID da venda não pode ser nulo ou vazio");
+                    erros.add("ID da venda não pode ser nulo ou vazio");
+                    continue;
+                }
+
+                // Verifica se a venda já existe
+                if (vendaRepository.existsById(venda.getId())) {
+                    logger.error("Venda já existe com o id: " + venda.getId());
+                    erros.add("Venda já existe com o id: " + venda.getId());
+                    continue;
+                }
+
+                // Busca o produto pelo ID
+                Optional<Produto> produtoOpt = produtoService.buscarPorId(venda.getProduto().getId());
+                if (!produtoOpt.isPresent()) {
+                    logger.error("Produto não encontrado com o id: " + venda.getProduto().getId());
+                    erros.add("Produto não encontrado com o id: " + venda.getProduto().getId());
+                    continue;
+                }
+
+                // Vincula o produto existente à venda
+                venda.setProduto(produtoOpt.get());
+
+                // Salva a venda
+                Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
+                vendaSalva.ifPresent(vendasSalvas::add);
+                logger.info("Venda salva com sucesso: " + venda.getId());
+            } catch (Exception e) {
+                logger.error("Erro ao salvar venda: " + venda.getId(), e);
+                erros.add("Erro ao salvar venda com id: " + venda.getId());
+            }
+        }
+
+        if (!erros.isEmpty()) {
+            logger.warn("Erros ao salvar vendas em lote: " + erros);
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(erros);
+        }
+
+        logger.info("Todas as vendas foram salvas com sucesso");
+        return ResponseEntity.status(HttpStatus.CREATED).body(vendasSalvas);
     }
 
     @CrossOrigin
@@ -201,7 +270,7 @@ public class APIVendaController {
     public ResponseEntity<Object> atualizar(@RequestBody Venda venda) {
         logger.info("Atualizando venda" + venda.getId());
 
-
+        infoMesService.recalcInfoMes(venda);
 
         return ResponseEntity.status(HttpStatus.OK).body(vendaService.atualizarVenda(venda));
     }
@@ -210,7 +279,16 @@ public class APIVendaController {
     @DeleteMapping(value = "vendas", params = "id")
     @Transactional
     public ResponseEntity<Object> deletarPorId(@RequestParam String id, HttpServletRequest req) {
+
+        Optional<Venda> vendaOpt = vendaService.buscarPorId(id);
+        if (!vendaOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Venda não encontrada com o id: " + id);
+        }
+        Venda venda = vendaOpt.get();
+
         logger.info("Deletando venda por id" + id);
+
+        infoMesService.recalcByDelete(venda);
 
         vendaService.deletarPorId(id);
 

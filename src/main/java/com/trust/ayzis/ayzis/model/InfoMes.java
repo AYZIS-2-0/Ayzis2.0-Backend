@@ -25,18 +25,18 @@ public class InfoMes {
 
     private Date monthYear;
 
-    private int individual;
-    private int componente;
-    private int direta;
-    private int total;
+    private int individual = 0;
+    private int componente = 0;
+    private int direta = 0;
+    private int total = 0;
 
-    private int pendenteIndividual;
-    private int pendenteComponente;
-    private int pendenteTotal;
+    private int pendenteIndividual = 0;
+    private int pendenteComponente = 0;
+    private int pendenteTotal = 0;
 
-    private int canceladoIndividual;
-    private int canceladoComponente;
-    private int canceladoTotal;
+    private int canceladoIndividual = 0;
+    private int canceladoComponente = 0;
+    private int canceladoTotal = 0;
 
     @ManyToOne
     private Produto produto;

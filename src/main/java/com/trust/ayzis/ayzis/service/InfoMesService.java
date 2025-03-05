@@ -102,6 +102,57 @@ public class InfoMesService implements IInfoMesService {
         }
     }
 
+    @Override
+    public void recalcInfoMes(Venda venda) {
+        logger.info("Venda: {} foi adicionada", venda.getId());
+        if (venda.getProduto().getProdutosComposicao() == null
+                || venda.getProduto().getProdutosComposicao().isEmpty()) {
+            processarProdutoSemComponentes(venda.getProduto(), venda);
+        } else {
+            processarProdutoComComponentes(venda.getProduto(), venda);
+        }
+    }
+
+    @Override
+    public void recalcByDelete(Venda venda) {
+        logger.info("Venda: {} foi deletada", venda.getId());
+
+        InfoMes infoMes = infoMesRepository.findByProdutoAndMonthYear(venda.getProduto(),
+                venda.getDataVenda().toLocalDate().getMonthValue(),
+                venda.getDataVenda().toLocalDate().getYear()).get();
+
+        if (venda.getProduto().getProdutosComposicao() == null || venda.getProduto().getProdutosComposicao().isEmpty()) {
+            if (venda.getStatus().equals(STATUS_ENTREGUE) || venda.getStatus().equals(STATUS_VENDA_ENTREGUE)
+                    || venda.getStatus().equals(STATUS_MEDIACAO_FINALIZADA)) {
+                infoMes.getVendasConcluidas().remove(venda);
+                recalcVendas(infoMes, infoMes.getVendasConcluidas(), "concluídas");
+            } else if (venda.getStatus().equals(STATUS_A_CAMINHO)) {
+                infoMes.getVendasPendentes().remove(venda);
+                recalcVendas(infoMes, infoMes.getVendasPendentes(), "pendentes");
+            } else {
+                infoMes.getVendasCanceladas().remove(venda);
+                recalcVendas(infoMes, infoMes.getVendasCanceladas(), "canceladas");
+            }
+        } else {
+            for (Componentes componente : venda.getProduto().getProdutosComposicao()) {
+                if (componente.getProdutoComponente().getId() == infoMes.getProduto().getId()) {
+                    int quantidade = venda.getQuantidade() * componente.getQuantidade();
+                    if (venda.getStatus().equals(STATUS_ENTREGUE) || venda.getStatus().equals(STATUS_VENDA_ENTREGUE)
+                            || venda.getStatus().equals(STATUS_MEDIACAO_FINALIZADA)) {
+                        infoMes.getVendasConcluidas().remove(venda);
+                        recalcVendas(infoMes, infoMes.getVendasConcluidas(), "concluídas");
+                    } else if (venda.getStatus().equals(STATUS_A_CAMINHO)) {
+                        infoMes.getVendasPendentes().remove(venda);
+                        recalcVendas(infoMes, infoMes.getVendasPendentes(), "pendentes");
+                    } else {
+                        infoMes.getVendasCanceladas().remove(venda);
+                        recalcVendas(infoMes, infoMes.getVendasCanceladas(), "canceladas");
+                    }
+                }
+            }
+        }
+    }
+
     private void processarProdutoComComponentes(Produto produto, Venda venda) {
         logger.info("Iterando sobre Produto com Componentes: {}", produto.getId());
 

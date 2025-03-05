@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.trust.ayzis.ayzis.model.InfoMes;
 import com.trust.ayzis.ayzis.model.Produto;
+import com.trust.ayzis.ayzis.model.Venda;
 
 public interface IInfoMesService {
     public Optional<InfoMes> buscarPorId(Long id);
@@ -21,6 +22,10 @@ public interface IInfoMesService {
     public List<InfoMes> buscarPorProdutoMesAnoEntre(Produto produto, Date inicio, Date fim);
 
     public void calcAllInfoMes();
+
+    public void recalcInfoMes(Venda venda);
+
+    public void recalcByDelete(Venda venda);
 
     public void deletarPorId(Long id);    
 }
