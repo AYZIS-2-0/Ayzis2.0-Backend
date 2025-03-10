@@ -183,23 +183,12 @@ public class APIVendaController {
                     .body("Produto não encontrado com o id: " + venda.getProduto().getId());
         }
 
-        // Verifica se a venda já existe
-        if (vendaRepository.existsById(venda.getId())) {
-            vendaService.atualizarVenda(venda);
-
-            infoMesService.recalcInfoMes(venda);
-
-            throw new ExceptionLogger("Venda já existe com o id: " + venda.getId() + ", atualizando venda");
-        }
-
         // Vincula o produto existente à venda
         venda.setProduto(produtoOpt.get());
 
         // Salva a venda
         Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
         logger.info("Venda salva com sucesso: " + vendaSalva.get().getId());
-
-        infoMesService.recalcInfoMes(venda);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
     }
