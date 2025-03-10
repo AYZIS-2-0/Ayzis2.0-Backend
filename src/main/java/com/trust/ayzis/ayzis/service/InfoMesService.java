@@ -136,7 +136,6 @@ public class InfoMesService implements IInfoMesService {
         } else {
             for (Componentes componente : venda.getProduto().getProdutosComposicao()) {
                 if (componente.getProdutoComponente().getId() == infoMes.getProduto().getId()) {
-                    int quantidade = venda.getQuantidade() * componente.getQuantidade();
                     if (venda.getStatus().equals(STATUS_ENTREGUE) || venda.getStatus().equals(STATUS_VENDA_ENTREGUE)
                             || venda.getStatus().equals(STATUS_MEDIACAO_FINALIZADA)) {
                         infoMes.getVendasConcluidas().remove(venda);

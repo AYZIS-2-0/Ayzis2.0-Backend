@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
-import com.trust.ayzis.ayzis.model.Produto;
 
 @Repository
 public interface IInfoMesRepository extends JpaRepository<InfoMes, Long> {
