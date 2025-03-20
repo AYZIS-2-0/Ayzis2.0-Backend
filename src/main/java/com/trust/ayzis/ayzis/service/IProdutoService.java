@@ -18,6 +18,8 @@ public interface IProdutoService {
 
     public List<Produto> buscarTodosProdutos();
 
+    public List<Produto> salvarProdutosPack(List<Produto> produtos);
+
     public Optional<Produto> salvarProduto(Produto produto);
 
     public Optional<Produto> atualizarProduto(Produto produto);

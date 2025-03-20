@@ -1,7 +1,10 @@
 package com.trust.ayzis.ayzis.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +66,25 @@ public class ProdutoService implements IProdutoService {
 
         List<Produto> produtos = produtoRepository.findAll();
         return produtos;
+    }
+
+    @Override
+    public List<Produto> salvarProdutosPack(List<Produto> produtos) {
+        logger.info("Salvando produtos pack");
+
+        Set<String> ids = new HashSet<>();
+        List<Produto> produtosUnicos = new ArrayList<>();
+
+        for (Produto produto : produtos) {
+            if (ids.add(produto.getId())) {
+                produtosUnicos.add(produto);
+            } else {
+                logger.warn("ID duplicado ignorado: " + produto.getId());
+            }
+        }
+
+        List<Produto> produtosSalvos = produtoRepository.saveAll(produtosUnicos);
+        return produtosSalvos;
     }
 
     @Override

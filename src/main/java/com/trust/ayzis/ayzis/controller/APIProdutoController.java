@@ -1,5 +1,6 @@
 package com.trust.ayzis.ayzis.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,10 @@ import jakarta.transaction.Transactional;
 @RestController
 @RequestMapping("/api/v1")
 public class APIProdutoController {
+
+    private final APIInfoMesController APIInfoMesController;
+
+    private final APIComponentesController APIComponentesController;
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Autowired
@@ -48,6 +53,11 @@ public class APIProdutoController {
 
     @Autowired
     IComponentesService componentesService;
+
+    APIProdutoController(APIComponentesController APIComponentesController, APIInfoMesController APIInfoMesController) {
+        this.APIComponentesController = APIComponentesController;
+        this.APIInfoMesController = APIInfoMesController;
+    }
 
     @CrossOrigin
     @GetMapping("/produtos")
@@ -110,6 +120,38 @@ public class APIProdutoController {
     public ResponseEntity<String> handleGeneralException(Exception ex) {
         logger.error("Erro interno: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno: " + ex.getMessage());
+    }
+
+    @CrossOrigin
+    @PostMapping("/produtos/pack")
+    @Transactional
+    public ResponseEntity<Object> salvarProdutosPack(@RequestBody List<Produto> produtos) {
+        logger.info(">>> Salvando pack de produtos");
+
+        try {
+            List<Produto> produtosSalvos = new ArrayList<>();
+            for (Produto produto : produtos) {
+                if (produtoRepository.existsById(produto.getId())) {
+                    logger.warn("Produto já existe com o id: " + produto.getId());
+                    continue; // Skip this product
+                }
+                produtosSalvos.add(produto);
+            }
+            if (!produtosSalvos.isEmpty()) {
+                produtoServico.salvarProdutosPack(produtosSalvos);
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(produtosSalvos);
+        } catch (ExceptionLogger ex) {
+            logger.error("Erro: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (DataIntegrityViolationException ex) {
+            logger.error("Erro de integridade de dados: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro de integridade de dados: " + ex.getMessage());
+        } catch (Exception ex) {
+            logger.error("Erro interno: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno: " + ex.getMessage());
+        }
     }
 
     @CrossOrigin
