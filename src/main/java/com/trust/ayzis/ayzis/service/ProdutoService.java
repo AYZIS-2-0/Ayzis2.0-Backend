@@ -69,7 +69,7 @@ public class ProdutoService implements IProdutoService {
     }
 
     @Override
-    public List<Produto> salvarProdutosPack(List<Produto> produtos) {
+    public List<Produto> salvarProdutosInMass(List<Produto> produtos) {
         logger.info("Salvando produtos pack");
 
         Set<String> ids = new HashSet<>();

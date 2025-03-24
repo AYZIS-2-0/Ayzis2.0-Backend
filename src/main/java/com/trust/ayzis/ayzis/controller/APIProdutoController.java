@@ -123,9 +123,9 @@ public class APIProdutoController {
     }
 
     @CrossOrigin
-    @PostMapping("/produtos/pack")
+    @PostMapping("/produtos/mass")
     @Transactional
-    public ResponseEntity<Object> salvarProdutosPack(@RequestBody List<Produto> produtos) {
+    public ResponseEntity<Object> salvarProdutosInMass(@RequestBody List<Produto> produtos) {
         logger.info(">>> Salvando pack de produtos");
 
         try {
@@ -138,7 +138,7 @@ public class APIProdutoController {
                 produtosSalvos.add(produto);
             }
             if (!produtosSalvos.isEmpty()) {
-                produtoServico.salvarProdutosPack(produtosSalvos);
+                produtoServico.salvarProdutosInMass(produtosSalvos);
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(produtosSalvos);
         } catch (ExceptionLogger ex) {
