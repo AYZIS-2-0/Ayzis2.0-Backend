@@ -2,8 +2,11 @@ package com.trust.ayzis.ayzis.service;
 
 import java.sql.Date;
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,6 +95,25 @@ public class VendaService implements IVendaService {
 
         List<Venda> vendas = vendaRepository.findAll();
         return vendas;
+    }
+
+    @Override
+    public List<Venda> salvarVendasInMass(List<Venda> vendas) {
+        logger.info("Salvando vendas pack");
+
+        Set<String> ids = new HashSet<>();
+        List<Venda> vendasUnicas = new ArrayList<>();
+
+        for (Venda venda : vendas) {
+            if (ids.add(venda.getId())) {
+                vendasUnicas.add(venda);
+            } else {
+                logger.warn("ID duplicado ignorado: " + venda.getId());
+            }
+        }
+
+        List<Venda> vendasSalvas = vendaRepository.saveAll(vendas);
+        return vendasSalvas;
     }
 
     @Override

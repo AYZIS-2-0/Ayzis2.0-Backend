@@ -166,6 +166,65 @@ public class APIVendaController {
     }
 
     @CrossOrigin
+    @PostMapping("/vendas/mass")
+    @Transactional
+    public ResponseEntity<Object> salvarVendasInMass(@RequestBody List<Venda> vendas) {
+        logger.info(">>> Salvando pack de vendas");
+
+        class VendaErro {
+            private Venda venda;
+            private String mensagem;
+
+            public VendaErro(Venda venda, String mensagem) {
+                this.venda = venda;
+                this.mensagem = mensagem;
+            }
+
+            public Venda getVenda() {
+                return venda;
+            }
+
+            public String getMensagem() {
+                return mensagem;
+            }
+        }
+
+        try {
+            List<Venda> vendasSalvas = new ArrayList<>();
+            List<VendaErro> vendasErro = new ArrayList<>();
+            for (Venda venda : vendas) {
+                if (vendaRepository.existsById(venda.getId())) {
+                    logger.warn("Venda já existe com o id: " + venda.getId());
+                    vendasErro.add(new VendaErro(venda, "Venda já existe com o id: " + venda.getId()));
+                    continue;
+                }
+                if (venda.getProduto() == null || venda.getProduto().getId() == null
+                        || venda.getProduto().getId().isEmpty()) {
+                    logger.warn("Produto não pode ser nulo ou vazio");
+                    vendasErro.add(new VendaErro(venda, "Produto não pode ser nulo ou vazio"));
+                    continue;
+                }
+                if (venda.getProduto().getId() != null) {
+                    Optional<Produto> produtoOpt = produtoService.buscarPorId(venda.getProduto().getId());
+                    if (!produtoOpt.isPresent()) {
+                        logger.warn("Produto não encontrado com o id: " + venda.getProduto().getId());
+                        vendasErro.add(
+                                new VendaErro(venda, "Produto não encontrado com o id: " + venda.getProduto().getId()));
+                        continue;
+                    }
+                    venda.setProduto(produtoOpt.get());
+                }
+                vendasSalvas.add(venda);
+            }
+            vendaService.salvarVendasInMass(vendasSalvas);
+            return ResponseEntity.status(HttpStatus.CREATED).body(vendasErro.isEmpty() ? vendasSalvas : vendasErro);
+        } catch (Exception e) {
+            logger.error("Erro ao salvar vendas em massa", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar vendas em massa");
+        }
+    }
+
+    @CrossOrigin
     @PostMapping("/vendas")
     @Transactional
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
@@ -191,66 +250,6 @@ public class APIVendaController {
         logger.info("Venda salva com sucesso: " + vendaSalva.get().getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
-    }
-
-    @CrossOrigin
-    @PostMapping("/vendas/lote")
-    @Transactional
-    public ResponseEntity<Object> salvarVendasEmLote(@RequestBody List<Venda> vendas) {
-        logger.info(">>> Salvando vendas em lote");
-
-        if (vendas.size() > 500) {
-            logger.error("O lote não pode conter mais de 500 vendas");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O lote não pode conter mais de 500 vendas");
-        }
-
-        List<String> erros = new ArrayList<>();
-        List<Venda> vendasSalvas = new ArrayList<>();
-
-        for (Venda venda : vendas) {
-            try {
-                // Verifica se o ID da venda está presente
-                if (venda.getId() == null || venda.getId().isEmpty()) {
-                    logger.error("ID da venda não pode ser nulo ou vazio");
-                    erros.add("ID da venda não pode ser nulo ou vazio");
-                    continue;
-                }
-
-                // Verifica se a venda já existe
-                if (vendaRepository.existsById(venda.getId())) {
-                    logger.error("Venda já existe com o id: " + venda.getId());
-                    erros.add("Venda já existe com o id: " + venda.getId());
-                    continue;
-                }
-
-                // Busca o produto pelo ID
-                Optional<Produto> produtoOpt = produtoService.buscarPorId(venda.getProduto().getId());
-                if (!produtoOpt.isPresent()) {
-                    logger.error("Produto não encontrado com o id: " + venda.getProduto().getId());
-                    erros.add("Produto não encontrado com o id: " + venda.getProduto().getId());
-                    continue;
-                }
-
-                // Vincula o produto existente à venda
-                venda.setProduto(produtoOpt.get());
-
-                // Salva a venda
-                Optional<Venda> vendaSalva = vendaService.salvarVenda(venda);
-                vendaSalva.ifPresent(vendasSalvas::add);
-                logger.info("Venda salva com sucesso: " + venda.getId());
-            } catch (Exception e) {
-                logger.error("Erro ao salvar venda: " + venda.getId(), e);
-                erros.add("Erro ao salvar venda com id: " + venda.getId());
-            }
-        }
-
-        if (!erros.isEmpty()) {
-            logger.warn("Erros ao salvar vendas em lote: " + erros);
-            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(erros);
-        }
-
-        logger.info("Todas as vendas foram salvas com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(vendasSalvas);
     }
 
     @CrossOrigin

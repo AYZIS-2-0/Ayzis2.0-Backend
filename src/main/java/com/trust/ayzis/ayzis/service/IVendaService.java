@@ -27,6 +27,8 @@ public interface IVendaService {
 
     public List<Venda> buscarTodasVendas();
 
+    public List<Venda> salvarVendasInMass(List<Venda> vendas);
+
     public Optional<Venda> salvarVenda(Venda venda);
 
     public Optional<Venda> atualizarVenda(Venda venda);
