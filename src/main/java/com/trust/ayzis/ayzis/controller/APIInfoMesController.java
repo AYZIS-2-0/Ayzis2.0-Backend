@@ -27,7 +27,7 @@ import com.trust.ayzis.ayzis.service.IInfoMesService;
 @RequestMapping("/api/v1")
 public class APIInfoMesController {
     Logger logger = LogManager.getLogger(this.getClass());
-    
+
     @Autowired
     IInfoMesService infoMesService;
 
