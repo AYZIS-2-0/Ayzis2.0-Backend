@@ -99,21 +99,45 @@ public class VendaService implements IVendaService {
 
     @Override
     public List<Venda> salvarVendasInMass(List<Venda> vendas) {
-        logger.info("Salvando vendas pack");
+        logger.info("Salvando vendas em massa");
 
-        Set<String> ids = new HashSet<>();
-        List<Venda> vendasUnicas = new ArrayList<>();
+        List<Venda> vendasSalvas = new ArrayList<>();
+        List<Venda> vendasAtualizadas = new ArrayList<>();
 
         for (Venda venda : vendas) {
-            if (ids.add(venda.getId())) {
-                vendasUnicas.add(venda);
+            Optional<Venda> vendaExistenteOpt = vendaRepository.findById(venda.getId());
+            if (vendaExistenteOpt.isPresent()) {
+                Venda vendaExistente = vendaExistenteOpt.get();
+                if (!vendaExistente.getStatus().equals(venda.getStatus())) {
+                    logger.info("Atualizando status da venda existente: " + venda.getId());
+                    vendaExistente.setStatus(venda.getStatus());
+                    vendaExistente.setDescStatus(venda.getDescStatus());
+                    vendaExistente.setQuantidade(venda.getQuantidade());
+                    vendaExistente.setValorTotal(venda.getValorTotal());
+                    vendaExistente.setDataVenda(venda.getDataVenda());
+                    vendasAtualizadas.add(vendaExistente);
+                }
             } else {
-                logger.warn("ID duplicado ignorado: " + venda.getId());
+                vendasSalvas.add(venda);
             }
         }
 
-        List<Venda> vendasSalvas = vendaRepository.saveAll(vendas);
-        return vendasSalvas;
+        // Salva novas vendas
+        if (!vendasSalvas.isEmpty()) {
+            vendaRepository.saveAll(vendasSalvas);
+        }
+
+        // Atualiza vendas existentes
+        if (!vendasAtualizadas.isEmpty()) {
+            vendaRepository.saveAll(vendasAtualizadas);
+        }
+
+        // Retorna todas as vendas processadas
+        List<Venda> todasVendas = new ArrayList<>();
+        todasVendas.addAll(vendasSalvas);
+        todasVendas.addAll(vendasAtualizadas);
+
+        return todasVendas;
     }
 
     @Override

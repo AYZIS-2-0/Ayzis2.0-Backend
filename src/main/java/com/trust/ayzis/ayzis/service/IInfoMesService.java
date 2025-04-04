@@ -25,7 +25,9 @@ public interface IInfoMesService {
 
     public void recalcInfoMes(Venda venda);
 
+    public void calcByDataVendaBetween(Date inicio, Date fim);
+
     public void recalcByDelete(Venda venda);
 
-    public void deletarPorId(Long id);    
+    public void deletarPorId(Long id);
 }

@@ -114,6 +114,35 @@ public class InfoMesService implements IInfoMesService {
     }
 
     @Override
+    public void calcByDataVendaBetween(Date inicio, Date fim) {
+        logger.info("Calculando infoMes por dataVenda entre: {} e {}", inicio, fim);
+        List<Produto> produtos = produtoRepository.findAll();
+        logger.info("Obtendo {} Produtos", produtos.size());
+
+        logger.info("Iterando sobre produtos");
+        for (Produto produto : produtos) {
+            logger.info("Produto: {}", produto.getId());
+
+            List<Venda> vendas = vendaRepository.findByDataVendaBetween(inicio, fim);
+
+            if (vendas.isEmpty()) {
+                continue;
+            }
+
+            logger.info("Iterando sobre Vendas");
+            for (Venda venda : vendas) {
+                logger.info("Venda: {}", venda.getId());
+                if (produto.getProdutosComposicao() == null
+                        || produto.getProdutosComposicao().isEmpty()) {
+                    processarProdutoSemComponentes(produto, venda);
+                } else {
+                    processarProdutoComComponentes(produto, venda);
+                }
+            }
+        }
+    }
+
+    @Override
     public void recalcByDelete(Venda venda) {
         logger.info("Venda: {} foi deletada", venda.getId());
 
@@ -121,7 +150,8 @@ public class InfoMesService implements IInfoMesService {
                 venda.getDataVenda().toLocalDate().getMonthValue(),
                 venda.getDataVenda().toLocalDate().getYear()).get();
 
-        if (venda.getProduto().getProdutosComposicao() == null || venda.getProduto().getProdutosComposicao().isEmpty()) {
+        if (venda.getProduto().getProdutosComposicao() == null
+                || venda.getProduto().getProdutosComposicao().isEmpty()) {
             if (venda.getStatus().equals(STATUS_ENTREGUE) || venda.getStatus().equals(STATUS_VENDA_ENTREGUE)
                     || venda.getStatus().equals(STATUS_MEDIACAO_FINALIZADA)) {
                 infoMes.getVendasConcluidas().remove(venda);

@@ -98,7 +98,8 @@ public class APIInfoMesController {
 
     @CrossOrigin
     @GetMapping(value = "/infoMes", params = { "produto", "inicio", "fim" })
-    public ResponseEntity<Object> buscarPorProdutoMesAnoEntre(@RequestParam Produto produto, @RequestParam String inicio,
+    public ResponseEntity<Object> buscarPorProdutoMesAnoEntre(@RequestParam Produto produto,
+            @RequestParam String inicio,
             @RequestParam String fim) {
         logger.info("Buscando infoMes por produto e mesAno entre: " + produto + " e " + inicio + " e " + fim);
 
@@ -123,6 +124,26 @@ public class APIInfoMesController {
         logger.info("Calculando infoMes");
 
         infoMesService.calcAllInfoMes();
+        return ResponseEntity.status(HttpStatus.OK).body("InfoMes calculado com sucesso.");
+    }
+
+    @CrossOrigin
+    @GetMapping("/infoMes/calcByMes")
+    public ResponseEntity<Object> calcByMes(@RequestParam String inicio, @RequestParam String fim) {
+        logger.info("Calculando infoMes entre as datas: {} e {}", inicio, fim);
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+        Date inicioDate;
+        Date fimDate;
+        try {
+            inicioDate = new java.sql.Date(dateFormat.parse(inicio).getTime());
+            fimDate = new java.sql.Date(dateFormat.parse(fim).getTime());
+        } catch (ParseException e) {
+            logger.error("Erro ao converter as datas para Date: {} e {}", inicio, fim, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de data inválido. Use 'yyyy-MM'.");
+        }
+
+        infoMesService.calcByDataVendaBetween(inicioDate, fimDate);
         return ResponseEntity.status(HttpStatus.OK).body("InfoMes calculado com sucesso.");
     }
 

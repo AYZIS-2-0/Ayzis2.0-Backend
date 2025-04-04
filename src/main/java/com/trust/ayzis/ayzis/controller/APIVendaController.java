@@ -193,11 +193,6 @@ public class APIVendaController {
             List<Venda> vendasSalvas = new ArrayList<>();
             List<VendaErro> vendasErro = new ArrayList<>();
             for (Venda venda : vendas) {
-                if (vendaRepository.existsById(venda.getId())) {
-                    logger.warn("Venda já existe com o id: " + venda.getId());
-                    vendasErro.add(new VendaErro(venda, "Venda já existe com o id: " + venda.getId()));
-                    continue;
-                }
                 if (venda.getProduto() == null || venda.getProduto().getId() == null
                         || venda.getProduto().getId().isEmpty()) {
                     logger.warn("Produto não pode ser nulo ou vazio");
