@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
 import com.trust.ayzis.ayzis.model.IVendaRepository;
+import com.trust.ayzis.ayzis.model.InfoMes;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.model.Venda;
@@ -163,6 +164,25 @@ public class APIVendaController {
         logger.info("Buscando venda por status: " + status);
 
         return ResponseEntity.status(HttpStatus.OK).body(vendaService.buscarPorStatus(status));
+    }
+
+    @CrossOrigin
+    @GetMapping("/vendas/infomes")
+    @Transactional
+    public ResponseEntity<Object> buscarVendasPorInfoMes(@RequestParam Long id) {
+        logger.info("Buscando vendas por InfoMes: " + id);
+
+        Optional<InfoMes> infoMesOpt = infoMesService.buscarPorId(id);
+        if (!infoMesOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("InfoMes não encontrado com o id: " + id);
+        }
+
+        List<Venda> vendas = vendaService.buscarVendasPorInfoMes(infoMesOpt.get());
+        if (vendas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Nenhuma venda encontrada para o InfoMes: " + id);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(vendas);
     }
 
     @CrossOrigin

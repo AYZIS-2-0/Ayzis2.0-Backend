@@ -41,29 +41,29 @@ public class InfoMes {
     @ManyToOne
     private Produto produto;
 
-    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
-    @JsonManagedReference
-    private List<Venda> vendaDireta = new ArrayList<>();
+    @OneToMany(mappedBy = "infoMes")
+    @JsonManagedReference("infoMes-venda")
+    private List<Venda> vendasDiretas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
-    @JsonManagedReference
-    private List<Venda> vendaConluida = new ArrayList<>();
+    @OneToMany(mappedBy = "infoMes")
+    @JsonManagedReference("infoMes-venda")
+    private List<Venda> vendasConcluidas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
-    @JsonManagedReference
-    private List<Venda> vendaPendente = new ArrayList<>();
+    @OneToMany(mappedBy = "infoMes")
+    @JsonManagedReference("infoMes-venda")
+    private List<Venda> vendasPendentes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "infoMes", orphanRemoval = true)
-    @JsonManagedReference
-    private List<Venda> vendaCancelada = new ArrayList<>();
+    @OneToMany(mappedBy = "infoMes")
+    @JsonManagedReference("infoMes-venda")
+    private List<Venda> vendasCanceladas = new ArrayList<>();
 
     public InfoMes() {
     }
 
     public InfoMes(Date monthYear, int individual, int componente, int direta, int total, int pendenteIndividual,
             int pendenteComponente, int pendenteTotal, int canceladoIndividual, int canceladoComponente,
-            int canceladoTotal, Produto produto, List<Venda> venda, List<Venda> vendaPendente,
-            List<Venda> vendaCancelada, List<Venda> vendaDireta) {
+            int canceladoTotal, Produto produto, List<Venda> vendasConcluidas, List<Venda> vendasPendentes,
+            List<Venda> vendasCanceladas, List<Venda> vendasDiretas) {
         this.monthYear = monthYear;
         this.individual = individual;
         this.componente = componente;
@@ -76,10 +76,10 @@ public class InfoMes {
         this.canceladoComponente = canceladoComponente;
         this.canceladoTotal = canceladoTotal;
         this.produto = produto;
-        this.vendaConluida = new ArrayList<>(venda);
-        this.vendaPendente = new ArrayList<>(venda);
-        this.vendaCancelada = new ArrayList<>(venda);
-        this.vendaDireta = new ArrayList<>(venda);
+        this.vendasConcluidas = new ArrayList<>(vendasConcluidas);
+        this.vendasPendentes = new ArrayList<>(vendasPendentes);
+        this.vendasCanceladas = new ArrayList<>(vendasCanceladas);
+        this.vendasDiretas = new ArrayList<>(vendasDiretas);
     }
 
     // Getters and Setters
@@ -189,34 +189,34 @@ public class InfoMes {
     }
 
     public List<Venda> getVendasConcluidas() {
-        return this.vendaConluida;
+        return this.vendasConcluidas;
     }
 
     public void setVendasConcluidas(List<Venda> venda) {
-        this.vendaConluida = venda;
+        this.vendasConcluidas = venda;
     }
 
     public List<Venda> getVendasPendentes() {
-        return this.vendaPendente;
+        return this.vendasPendentes;
     }
 
     public void setVendasPendentes(List<Venda> venda) {
-        this.vendaPendente = venda;
+        this.vendasPendentes = venda;
     }
 
     public List<Venda> getVendasCanceladas() {
-        return this.vendaCancelada;
+        return this.vendasCanceladas;
     }
 
     public void setVendasCanceladas(List<Venda> venda) {
-        this.vendaCancelada = venda;
+        this.vendasCanceladas = venda;
     }
 
     public List<Venda> getVendasDiretas() {
-        return this.vendaDireta;
+        return this.vendasDiretas;
     }
 
     public void setVendasDiretas(List<Venda> venda) {
-        this.vendaDireta = venda;
+        this.vendasDiretas = venda;
     }
 }

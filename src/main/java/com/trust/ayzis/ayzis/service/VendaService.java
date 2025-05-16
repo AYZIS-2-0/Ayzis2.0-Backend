@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.trust.ayzis.ayzis.model.IVendaRepository;
+import com.trust.ayzis.ayzis.model.InfoMes;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Venda;
 
@@ -94,6 +95,14 @@ public class VendaService implements IVendaService {
         logger.info("Buscando todas as vendas");
 
         List<Venda> vendas = vendaRepository.findAll();
+        return vendas;
+    }
+
+    @Override
+    public List<Venda> buscarVendasPorInfoMes(InfoMes InfoMes) {
+        logger.info("Buscando vendas por InfoMes: " + InfoMes.getId());
+
+        List<Venda> vendas = vendaRepository.findByInfoMes(InfoMes);
         return vendas;
     }
 

@@ -23,6 +23,8 @@ public interface IVendaRepository extends JpaRepository<Venda, String> {
 
     public List<Venda> findByProduto(Produto produto);
 
+    public List<Venda> findByInfoMes(InfoMes infoMes);
+
     public List<Venda> findByStatus(String status);
 
     public void deleteById(String id);

@@ -2,12 +2,13 @@ package com.trust.ayzis.ayzis.model;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
 
 @Entity
 public class Venda {
@@ -25,16 +26,17 @@ public class Venda {
     private Produto produto;
 
     @ManyToOne
-    @JsonIgnore
+    @JoinColumn(name = "info_mes_id")
+    @JsonBackReference("infoMes-venda")
     private InfoMes infoMes;
-
 
     // Getters and Setters
 
     public Venda() {
     }
 
-    public Venda(String id, Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal, String origem,
+    public Venda(String id, Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal,
+            String origem,
             Produto produto) {
         this.id = id;
         this.dataVenda = dataVenda;
