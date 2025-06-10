@@ -111,5 +111,4 @@ public class Venda {
     public void setProduto(Produto produto) {
         this.produto = produto;
     }
-
 }

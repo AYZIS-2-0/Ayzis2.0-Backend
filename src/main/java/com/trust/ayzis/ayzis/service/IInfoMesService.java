@@ -21,6 +21,8 @@ public interface IInfoMesService {
 
     public List<InfoMes> buscarPorProdutoMesAnoEntre(Produto produto, Date inicio, Date fim);
 
+    public List<Venda> bucarVendasPorInfoMes(Long id);
+
     public void calcAllInfoMes();
 
     public void recalcInfoMes(Venda venda);

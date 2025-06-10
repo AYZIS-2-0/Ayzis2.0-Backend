@@ -74,6 +74,13 @@ public class InfoMesService implements IInfoMesService {
     }
 
     @Override
+    public List<Venda> bucarVendasPorInfoMes(Long id) {
+        logger.info("Buscando vendas por infoMes: {}", id);
+        InfoMes infoMes = infoMesRepository.findById(id).get();
+        return infoMes.getVendasConcluidas();
+    }
+
+    @Override
     public void calcAllInfoMes() {
         logger.info("Calculando infoMes");
         List<Produto> produtos = produtoRepository.findAll();
@@ -100,6 +107,7 @@ public class InfoMesService implements IInfoMesService {
                 }
             }
         }
+        logger.info("Cálculo de infoMes concluído");
     }
 
     @Override

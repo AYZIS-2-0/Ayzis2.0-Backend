@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trust.ayzis.ayzis.model.InfoMes;
 import com.trust.ayzis.ayzis.model.Produto;
+import com.trust.ayzis.ayzis.model.Venda;
 import com.trust.ayzis.ayzis.service.IInfoMesService;
 
 @RestController
@@ -116,6 +117,15 @@ public class APIInfoMesController {
 
         List<InfoMes> infoMes = infoMesService.buscarPorProdutoMesAnoEntre(produto, inicioDate, fimDate);
         return ResponseEntity.status(HttpStatus.OK).body(infoMes);
+    }
+
+    @CrossOrigin
+    @GetMapping("/infoMes/vendas")
+    public ResponseEntity<Object> bucarVendasPorInfoMes(@RequestParam Long id) {
+        logger.info("Buscando vendas por infoMes id: " + id);
+
+        List<Venda> vendas = infoMesService.bucarVendasPorInfoMes(id);
+        return ResponseEntity.status(HttpStatus.OK).body(vendas);
     }
 
     @CrossOrigin
