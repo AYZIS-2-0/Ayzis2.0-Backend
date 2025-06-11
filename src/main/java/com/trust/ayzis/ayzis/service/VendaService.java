@@ -55,6 +55,14 @@ public class VendaService implements IVendaService {
     }
 
     @Override
+    public List<Venda> buscarPorPeriodo(Date dataInicio, Date dataFim) {
+        logger.info("Buscando vendas por período: " + dataInicio + " a " + dataFim);
+
+        List<Venda> vendas = vendaRepository.findByDataVendaBetween(dataInicio, dataFim);
+        return vendas;
+    }
+
+    @Override
     public List<Venda> buscarPorProduto(Produto produto) {
         logger.info("Buscando venda por produto: " + produto.getId());
 

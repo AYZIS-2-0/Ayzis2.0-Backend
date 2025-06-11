@@ -18,6 +18,8 @@ public interface IVendaService {
 
     public List<Venda> buscarVendasPorMes(YearMonth yearMonth);
 
+    public List<Venda> buscarPorPeriodo(Date dataInicio, Date dataFim);
+
     public List<Venda> buscarPorProduto(Produto produto);
 
     public List<Venda> buscarPorProdutoMes(Produto produto, YearMonth yearMonth);
