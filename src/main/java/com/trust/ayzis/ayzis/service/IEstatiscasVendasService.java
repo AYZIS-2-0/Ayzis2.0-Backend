@@ -11,6 +11,8 @@ public interface IEstatiscasVendasService {
     // 1. Soma total de vendas (por produto, por mês, geral)
     public int somaTotal();
 
+    public Map<String, Integer> somaMensal(Produto produto);
+
     // 2. Média de vendas
     public double media();
 

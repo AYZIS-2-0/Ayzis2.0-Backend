@@ -54,15 +54,66 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
                 .sum();
     }
 
-    // sobrecarga somaTotal: calcula a soma total de vendas por produto e período
-    
+    @Override
+    public Map<String, Integer> somaMensal(Produto produto) {
+        logger.info("Calculando a soma mensal de vendas para o produto: " + produto.getId());
+
+        List<Venda> vendas = vendaService.buscarPorProduto(produto);
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("MM/yyyy");
+
+        return vendas.stream()
+                .collect(java.util.stream.Collectors.groupingBy(
+                        v -> v.getDataVenda().toInstant()
+                                .atZone(java.time.ZoneId.systemDefault())
+                                .toLocalDate()
+                                .format(formatter),
+                        java.util.stream.Collectors.summingInt(Venda::getQuantidade)));
+    }
 
     @Override
     public double media() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'media'");
+        logger.info("Calculando a média de vendas");
+
+        List<Venda> vendas = vendaService.buscarTodasVendas();
+        if (vendas.isEmpty()) {
+            return 0.0;
+        }
+
+        double total = vendas.stream()
+                .mapToInt(v -> v.getQuantidade() != null ? v.getQuantidade() : 0)
+                .sum();
+        return total / vendas.size();
     }
 
+    public double media(Produto produto) {
+        logger.info("Calculando a média de vendas para o produto: " + produto.getId());
+
+        List<Venda> vendas = vendaService.buscarPorProduto(produto);
+        if (vendas.isEmpty()) {
+            return 0.0;
+        }
+
+        double total = vendas.stream()
+                .mapToInt(v -> v.getQuantidade() != null ? v.getQuantidade() : 0)
+                .sum();
+        return total / vendas.size();
+    }
+
+    public double media(Date dataInicio, Date dataFim) {
+        logger.info("Calculando a média de vendas entre: " + dataInicio + " e " + dataFim);
+
+        List<Venda> vendas = vendaService.buscarPorPeriodo(
+                new java.sql.Date(dataInicio.getTime()),
+                new java.sql.Date(dataFim.getTime()));
+        if (vendas.isEmpty()) {
+            return 0.0;
+        }
+
+        double total = vendas.stream()
+                .mapToInt(v -> v.getQuantidade() != null ? v.getQuantidade() : 0)
+                .sum();
+        return total / vendas.size();
+    }
     @Override
     public double mediana() {
         // TODO Auto-generated method stub
