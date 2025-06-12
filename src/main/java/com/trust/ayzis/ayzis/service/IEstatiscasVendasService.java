@@ -8,41 +8,53 @@ import com.trust.ayzis.ayzis.model.Venda;
 
 public interface IEstatiscasVendasService {
 
-    // 1. Soma total de vendas (por produto, por mês, geral)
-    public int somaTotal();
+    // Soma
+    public Map<String, Integer> somaVendasQTDPorMes();
+    public Map<String, Double> somaVendasValorPorMes();
 
-    public Map<String, Integer> somaMensal(Produto produto);
+    public Map<Produto, Map<String, Integer>> somaVendasQTDPorMesProduto();
+    public Map<Produto, Map<String, Double>> somaVendasValorPorMesProduto();
 
-    // 2. Média de vendas
-    public double media();
+    public Map<String, Integer> somaVendasQTDPorMesProduto(Produto produto);
+    public Map<String, Double> somaVendasValorPorMesProduto(Produto produto);
 
-    // 3. Mediana de vendas
-    public double mediana();
+    // Média
+    public Map<String, Integer> mediaVendasQTDPorMes();
+    public Map<String, Double> mediaVendasValorPorMes();
 
-    // 4. Moda de vendas
-    public int moda();
+    public Map<Produto, Map<String, Integer>> mediaVendasQTDPorMesProduto();
+    public Map<Produto, Map<String, Double>> mediaVendasValorPorMesProduto();
 
-    // 5. Desvio padrão das vendas
-    public double desvioPadrao();
+    public Map<String, Integer> mediaVendasQTDPorAnoProduto(Produto produto);
 
-    // 6. Crescimento percentual entre dois períodos
-    public double crescimentoPercentual(int valorAnterior, int valorAtual);
+    // Mediana
+    public Map<String, Integer> medianaVendasQTDPorMes();
+    public Map<String, Double> medianaVendasValorPorMes();
 
-    // 7. Taxa de participação de cada produto
-    public Map<Produto, Double> taxaParticipacao(List<Venda> vendas);
+    // Moda
+    public Produto produtoMaisVendidoPorPeriodo(String periodo);
+    public Map<String, Produto> produtoMaisVendidoPorMes();
 
-    // 8. Análise ABC
-    public Map<String, List<Produto>> analiseABC(List<Venda> vendas);
+    // Desvio Padrão
+    public Map<String, Double> desvioPadraoVendasQTDPorMes();
+    public Map<String, Double> desvioPadraoVendasValorPorMes();
 
-    // 9. Tendência (ex: lista de totais por mês)
-    public List<Double> tendencia(List<Venda> vendas, List<String> periodos);
+    // Crescimento Percentual
+    public Map<String, Double> crescimentoPercentualVendasPorMes();
 
-    // 10. Variação absoluta entre dois valores
-    public int variacaoAbsoluta(int valorAnterior, int valorAtual);
+    // Taxa de Participação
+    public Map<Produto, Double> taxaParticipacaoPorProduto();
+    public Map<String, Double> taxaParticipacaoPorOrigem();
 
-    // 11. Índice de sazonalidade (por mês)
-    public Map<String, Double> indiceSazonalidade(List<Venda> vendas);
+    // Análise ABC
+    public Map<Produto, String> classificacaoABCProdutos();
 
-    // 12. Ticket médio (valor médio por venda)
-    public double ticketMedio(List<Venda> vendas);
+    // Tendência
+    public Map<Produto, List<Double>> tendenciaVendasPorMesProduto();
+
+    // Ticket Médio
+    public Map<String, Double> ticketMedioPorMes();
+
+    // Conversão por Origem
+    public Map<String, Double> conversaoPorOrigem();
 }
