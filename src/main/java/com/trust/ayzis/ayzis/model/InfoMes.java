@@ -41,20 +41,20 @@ public class InfoMes {
     @ManyToOne
     private Produto produto;
 
-    @OneToMany(mappedBy = "infoMes")
-    @JsonManagedReference("infoMes-venda")
+    @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Venda> vendasDiretas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "infoMes")
-    @JsonManagedReference("infoMes-venda")
+    @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Venda> vendasConcluidas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "infoMes")
-    @JsonManagedReference("infoMes-venda")
+    @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Venda> vendasPendentes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "infoMes")
-    @JsonManagedReference("infoMes-venda")
+    @OneToMany(mappedBy = "infoMes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Venda> vendasCanceladas = new ArrayList<>();
 
     public InfoMes() {

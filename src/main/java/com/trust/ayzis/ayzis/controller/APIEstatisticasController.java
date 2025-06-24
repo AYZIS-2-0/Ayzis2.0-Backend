@@ -20,7 +20,7 @@ import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api/v1/estatisticas")
-public class APIEstatisticasContraller {
+public class APIEstatisticasController {
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Autowired

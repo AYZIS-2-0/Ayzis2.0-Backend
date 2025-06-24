@@ -12,8 +12,8 @@ public interface IEstatiscasVendasService {
     public Map<String, Integer> somaVendasQTDPorMes();
     public Map<String, Double> somaVendasValorPorMes();
 
-    public Map<Produto, Map<String, Integer>> somaVendasQTDPorMesProduto();
-    public Map<Produto, Map<String, Double>> somaVendasValorPorMesProduto();
+    public Map<String, Map<String, Object>> somaVendasQTDPorMesProduto();
+    public Map<String, Map<String, Object>> somaVendasValorPorMesProduto();
 
     public Map<String, Integer> somaVendasQTDPorMesProduto(Produto produto);
     public Map<String, Double> somaVendasValorPorMesProduto(Produto produto);
