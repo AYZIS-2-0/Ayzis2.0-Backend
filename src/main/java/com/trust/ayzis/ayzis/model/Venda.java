@@ -21,6 +21,7 @@ public class Venda {
     private Integer quantidade;
     private Double valorTotal;
     private String origem;
+    private String vendedor;
 
     @ManyToOne
     private Produto produto;
@@ -37,7 +38,7 @@ public class Venda {
 
     public Venda(Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal,
             String origem,
-            Produto produto) {
+            Produto produto, String vendedor) {
         this.dataVenda = dataVenda;
         this.status = status;
         this.descStatus = descStatus;
@@ -45,8 +46,8 @@ public class Venda {
         this.valorTotal = valorTotal;
         this.origem = origem;
         this.produto = produto;
+        this.vendedor = vendedor;
     }
-
 
     public Venda(String id, Date dataVenda, String status, String descStatus, Integer quantidade, Double valorTotal,
             String origem,
@@ -131,5 +132,13 @@ public class Venda {
 
     public void setInfoMes(InfoMes infoMes) {
         this.infoMes = infoMes;
+    }
+
+    public String getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(String vendedor) {
+        this.vendedor = vendedor;
     }
 }

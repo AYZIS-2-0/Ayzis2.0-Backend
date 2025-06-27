@@ -47,6 +47,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Integer> somaPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             somaPorMes.put(mes, somaPorMes.getOrDefault(mes, 0) + venda.getQuantidade());
         }
@@ -60,6 +61,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Double> somaPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             somaPorMes.put(mes, somaPorMes.getOrDefault(mes, 0.0) + venda.getValorTotal());
         }
@@ -73,6 +75,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Map<String, Object>> somaPorProdutoMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             Produto produto = venda.getProduto();
             String produtoKey = produto.getId();
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
@@ -100,6 +103,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Map<String, Object>> somaPorProdutoMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             Produto produto = venda.getProduto();
             String produtoKey = produto.getId();
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
@@ -128,6 +132,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Integer> somaPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             somaPorMes.put(mes, somaPorMes.getOrDefault(mes, 0) + venda.getQuantidade());
         }
@@ -141,6 +146,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Double> somaPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             somaPorMes.put(mes, somaPorMes.getOrDefault(mes, 0.0) + venda.getValorTotal());
         }
@@ -155,6 +161,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Integer> cont = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             soma.put(mes, soma.getOrDefault(mes, 0) + venda.getQuantidade());
             cont.put(mes, cont.getOrDefault(mes, 0) + 1);
@@ -174,6 +181,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Integer> cont = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             soma.put(mes, soma.getOrDefault(mes, 0.0) + venda.getValorTotal());
             cont.put(mes, cont.getOrDefault(mes, 0) + 1);
@@ -193,6 +201,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<Produto, Map<String, Integer>> contPorProdutoMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             Produto produto = venda.getProduto();
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             somaPorProdutoMes
@@ -223,6 +232,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<Produto, Map<String, Integer>> contPorProdutoMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             Produto produto = venda.getProduto();
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             somaPorProdutoMes
@@ -253,6 +263,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Integer> contPorAno = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String ano = new java.text.SimpleDateFormat("yyyy").format(venda.getDataVenda());
             somaPorAno.put(ano, somaPorAno.getOrDefault(ano, 0) + venda.getQuantidade());
             contPorAno.put(ano, contPorAno.getOrDefault(ano, 0) + 1);
@@ -271,6 +282,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, List<Integer>> quantidadesPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             quantidadesPorMes.computeIfAbsent(mes, k -> new ArrayList<>()).add(venda.getQuantidade());
         }
@@ -293,6 +305,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, List<Double>> valoresPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             valoresPorMes.computeIfAbsent(mes, k -> new ArrayList<>()).add(venda.getValorTotal());
         }
@@ -314,6 +327,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<Produto, Integer> contagem = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             if (mes.equals(periodo)) {
                 Produto produto = venda.getProduto();
@@ -330,6 +344,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, Map<Produto, Integer>> contagem = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             Produto produto = venda.getProduto();
             contagem.computeIfAbsent(mes, k -> new HashMap<>())
@@ -350,6 +365,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, List<Integer>> quantidadesPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getQuantidade() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             quantidadesPorMes.computeIfAbsent(mes, k -> new ArrayList<>()).add(venda.getQuantidade());
         }
@@ -371,6 +387,7 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
         Map<String, List<Double>> valoresPorMes = new HashMap<>();
         for (Venda venda : vendas) {
             if (!isVendaEntregue(venda)) continue;
+            if (venda.getValorTotal() == null) continue;
             String mes = new java.text.SimpleDateFormat("yyyy-MM").format(venda.getDataVenda());
             valoresPorMes.computeIfAbsent(mes, k -> new ArrayList<>()).add(venda.getValorTotal());
         }
