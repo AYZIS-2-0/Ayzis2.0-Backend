@@ -40,8 +40,6 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/api/v1")
 public class APIProdutoController {
 
-    private final APIInfoMesController APIInfoMesController;
-
     private final APIComponentesController APIComponentesController;
     Logger logger = LogManager.getLogger(this.getClass());
 
@@ -54,9 +52,8 @@ public class APIProdutoController {
     @Autowired
     IComponentesService componentesService;
 
-    APIProdutoController(APIComponentesController APIComponentesController, APIInfoMesController APIInfoMesController) {
+    APIProdutoController(APIComponentesController APIComponentesController) {
         this.APIComponentesController = APIComponentesController;
-        this.APIInfoMesController = APIInfoMesController;
     }
 
     @CrossOrigin

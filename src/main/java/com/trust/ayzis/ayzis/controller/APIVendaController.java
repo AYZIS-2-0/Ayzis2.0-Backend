@@ -30,11 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
 import com.trust.ayzis.ayzis.model.IVendaRepository;
-import com.trust.ayzis.ayzis.model.InfoMes;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.model.Venda;
-import com.trust.ayzis.ayzis.service.IInfoMesService;
 import com.trust.ayzis.ayzis.service.IProdutoService;
 import com.trust.ayzis.ayzis.service.IVendaService;
 
@@ -54,9 +52,6 @@ public class APIVendaController {
 
     @Autowired
     IVendaRepository vendaRepository;
-
-    @Autowired
-    IInfoMesService infoMesService;
 
     @CrossOrigin
     @GetMapping("/vendas")
@@ -166,25 +161,6 @@ public class APIVendaController {
     }
 
     @CrossOrigin
-    @GetMapping("/vendas/infomes")
-    @Transactional
-    public ResponseEntity<Object> buscarVendasPorInfoMes(@RequestParam Long id) {
-        logger.info("Buscando vendas por InfoMes: " + id);
-
-        Optional<InfoMes> infoMesOpt = infoMesService.buscarPorId(id);
-        if (!infoMesOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("InfoMes não encontrado com o id: " + id);
-        }
-
-        List<Venda> vendas = vendaService.buscarVendasPorInfoMes(infoMesOpt.get());
-        if (vendas.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Nenhuma venda encontrada para o InfoMes: " + id);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(vendas);
-    }
-
-    @CrossOrigin
     @PostMapping("/vendas/mass")
     @Transactional
     public ResponseEntity<Object> salvarVendasInMass(@RequestBody List<Venda> vendas) {
@@ -272,8 +248,6 @@ public class APIVendaController {
     public ResponseEntity<Object> atualizar(@RequestBody Venda venda) {
         logger.info("Atualizando venda" + venda.getId());
 
-        infoMesService.recalcInfoMes(venda);
-
         return ResponseEntity.status(HttpStatus.OK).body(vendaService.atualizarVenda(venda));
     }
 
@@ -286,11 +260,8 @@ public class APIVendaController {
         if (!vendaOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Venda não encontrada com o id: " + id);
         }
-        Venda venda = vendaOpt.get();
 
         logger.info("Deletando venda por id" + id);
-
-        infoMesService.recalcByDelete(venda);
 
         vendaService.deletarPorId(id);
 

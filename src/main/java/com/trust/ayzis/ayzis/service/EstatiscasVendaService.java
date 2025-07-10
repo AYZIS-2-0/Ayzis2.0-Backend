@@ -30,9 +30,6 @@ public class EstatiscasVendaService implements IEstatiscasVendasService {
     @Autowired
     IVendaService vendaService;
 
-    @Autowired
-    IInfoMesService infoMesService;
-
     private boolean isVendaEntregue(Venda venda) {
         String status = venda.getStatus();
         return STATUS_ENTREGUE.equalsIgnoreCase(status)
