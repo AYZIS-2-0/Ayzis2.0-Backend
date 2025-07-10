@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,6 +57,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping("/vendas")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarTodos(@RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
         logger.info("Buscando todas as vendas");
@@ -70,6 +72,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping("/vendas/all")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarTodos() {
         logger.info("Buscando todas as vendas");
 
@@ -81,6 +84,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping(value = "vendas", params = "id")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarPorId(@RequestParam String id) {
         logger.info("Buscando venda por id: " + id);
 
@@ -90,6 +94,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping(value = "vendas", params = "data")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarPorData(@RequestParam String data) {
         logger.info("Buscando venda por data: " + data);
 
@@ -107,6 +112,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping(value = "vendas", params = "mes")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarPorMes(@RequestParam String mes) {
         logger.info("Buscando venda por mês: " + mes);
 
@@ -120,6 +126,7 @@ public class APIVendaController {
 
     @CrossOrigin
     @GetMapping(value = "vendas", params = "sku")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarVendasPorProduto(@RequestParam("sku") String produtoId) {
         logger.info("Buscando vendas por produto id: " + produtoId);
 
@@ -135,6 +142,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping(value = "vendas", params = { "sku", "mes" })
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarVendasPorProdutoMes(@RequestParam("sku") String produtoId,
             @RequestParam("mes") String mes) {
         logger.info("Buscando vendas por produto id: " + produtoId + " e mês: " + mes);
@@ -154,6 +162,7 @@ public class APIVendaController {
     @CrossOrigin
     @GetMapping(value = "vendas", params = "status")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarPorStatus(@RequestParam String status) {
         logger.info("Buscando venda por status: " + status);
 
@@ -163,6 +172,7 @@ public class APIVendaController {
     @CrossOrigin
     @PostMapping("/vendas/mass")
     @Transactional
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> salvarVendasInMass(@RequestBody List<Venda> vendas) {
         logger.info(">>> Salvando pack de vendas");
 
@@ -217,6 +227,7 @@ public class APIVendaController {
     @CrossOrigin
     @PostMapping("/vendas")
     @Transactional
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> salvarVenda(@RequestBody Venda venda) {
         logger.info(">>> Salvando venda: " + venda.getId());
 
@@ -245,6 +256,7 @@ public class APIVendaController {
     @CrossOrigin
     @PatchMapping("/vendas")
     @Transactional
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> atualizar(@RequestBody Venda venda) {
         logger.info("Atualizando venda" + venda.getId());
 
@@ -254,6 +266,7 @@ public class APIVendaController {
     @CrossOrigin
     @DeleteMapping(value = "vendas", params = "id")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> deletarPorId(@RequestParam String id, HttpServletRequest req) {
 
         Optional<Venda> vendaOpt = vendaService.buscarPorId(id);

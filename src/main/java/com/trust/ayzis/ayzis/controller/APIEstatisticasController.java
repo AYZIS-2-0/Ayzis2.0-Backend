@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ public class APIEstatisticasController {
     @CrossOrigin
     @GetMapping("/soma-qtd")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getSomaQuantidadeVendas() {
         logger.info("Buscando soma da quantidade de vendas");
         try {
@@ -50,6 +52,7 @@ public class APIEstatisticasController {
     @CrossOrigin
     @GetMapping("/soma-valores")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getSomaValoresVendas() {
         logger.info("Buscando soma dos valores das vendas");
         try {
@@ -65,6 +68,7 @@ public class APIEstatisticasController {
     @CrossOrigin
     @GetMapping("/soma-qtd-produtos")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getSomaProdutosVendidos() {
         logger.info("Buscando soma dos produtos vendidos");
         try {
@@ -80,6 +84,7 @@ public class APIEstatisticasController {
     @CrossOrigin
     @GetMapping(value = "soma-qtd-produtos", params = "produtoId")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getSomaProdutosVendidosPorMes(@RequestParam String produtoId) {
         logger.info("Buscando soma dos produtos vendidos por mês");
 
@@ -98,6 +103,7 @@ public class APIEstatisticasController {
     @CrossOrigin
     @GetMapping("/soma-valores-produtos")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getSomaVendas() {
         logger.info("Buscando soma das vendas");
         try {

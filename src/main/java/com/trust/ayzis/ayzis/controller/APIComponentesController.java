@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,7 @@ public class APIComponentesController {
     @CrossOrigin
     @GetMapping(value = "componentes", params = "id")
     @Transactional
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> buscarPorId(@RequestParam("id") Long id) {
         logger.info("Buscando componente por id" + id);
 
@@ -52,6 +54,7 @@ public class APIComponentesController {
     @CrossOrigin
     @GetMapping(value = "componentes", params = "produtoComposto")
     @Transactional
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> buscarPorProdutoComposto(@RequestParam("produtoComposto") String produtoComposto) {
         logger.info("Buscando componentes por produto composto" + produtoComposto);
 
@@ -67,6 +70,7 @@ public class APIComponentesController {
     @CrossOrigin
     @GetMapping(value = "componentes", params = "produtoComponente")
     @Transactional
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> buscarPorProdutoComponente(
             @RequestParam("produtoComponente") String produtoComponente) {
         logger.info("Buscando componentes por produto componente" + produtoComponente);
@@ -83,6 +87,7 @@ public class APIComponentesController {
     @CrossOrigin
     @PostMapping(value = "componentes", params = "produtoComposto")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<Object> salvarComponente(@RequestParam("produtoComposto") String produtoComposto,
             @RequestParam("produtoComponente") String produtoComponente,
             @RequestParam("quantidade") Integer quantidade) {
@@ -115,6 +120,7 @@ public class APIComponentesController {
     @CrossOrigin
     @PatchMapping(value = "componentes", params = "id")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<Object> atualizarComponente(@RequestParam("id") Long id,
             @RequestParam("produtoComposto") String produtoComposto,
             @RequestParam("produtoComponente") String produtoComponente,
@@ -150,6 +156,7 @@ public class APIComponentesController {
     @CrossOrigin
     @DeleteMapping(value = "componentes", params = "id")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> deletarComponentePorId(@RequestParam("id") Long id, HttpServletRequest req) {
         logger.info("Deletando componente por id" + id);
 

@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +60,7 @@ public class APIProdutoController {
     @CrossOrigin
     @GetMapping("/produtos")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarTodos(@RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
         logger.info("Buscando todos os produtos");
@@ -71,6 +73,7 @@ public class APIProdutoController {
     @CrossOrigin
     @GetMapping("/produtos/all")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarTodos() {
         logger.info("Buscando todos os produtos");
 
@@ -81,6 +84,7 @@ public class APIProdutoController {
     @CrossOrigin
     @GetMapping(value = "produtos", params = "id")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarPorId(@RequestParam("id") String id) {
         logger.info("Buscando produto por id" + id);
 
@@ -90,6 +94,7 @@ public class APIProdutoController {
     @CrossOrigin
     @GetMapping(value = "produtos", params = "nome")
     @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> buscarPorNome(@RequestParam String nome) {
         logger.info("Buscando produto por nome" + nome);
 
@@ -97,6 +102,7 @@ public class APIProdutoController {
     }
 
     @GetMapping("/produtosComposicao")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public List<Produto> getProdutosComposicao(@RequestParam Produto produto) {
         return produtoServico.buscarPorProdutosCompostos(produto);
     }
@@ -122,6 +128,7 @@ public class APIProdutoController {
     @CrossOrigin
     @PostMapping("/produtos/mass")
     @Transactional
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> salvarProdutosInMass(@RequestBody List<Produto> produtos) {
         logger.info(">>> Salvando pack de produtos");
 
@@ -154,6 +161,7 @@ public class APIProdutoController {
     @CrossOrigin
     @PostMapping("/produtos")
     @Transactional
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> salvarProduto(@RequestBody Produto produto) {
         logger.info(">>> Salvando produto: " + produto.getId());
 
@@ -180,6 +188,7 @@ public class APIProdutoController {
     @CrossOrigin
     @PatchMapping("/produtos")
     @Transactional
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<Object> atualizar(@RequestBody Produto produto) {
         logger.info("Atualizando produto" + produto.getId());
 
@@ -189,6 +198,7 @@ public class APIProdutoController {
     @CrossOrigin
     @DeleteMapping("/produtos/deletar")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> deletarPorId(@RequestParam("id") String id, HttpServletRequest req) {
         logger.info("Deletando produto por id" + id);
 
