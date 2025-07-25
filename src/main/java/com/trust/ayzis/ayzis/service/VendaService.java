@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.trust.ayzis.ayzis.model.IVendaRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Venda;
+import com.trust.ayzis.ayzis.repository.IVendaRepository;
 
 @Service
 public class VendaService implements IVendaService {

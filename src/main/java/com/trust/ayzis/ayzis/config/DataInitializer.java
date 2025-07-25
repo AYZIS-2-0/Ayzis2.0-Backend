@@ -1,7 +1,8 @@
 package com.trust.ayzis.ayzis.config;
 
-import com.trust.ayzis.ayzis.model.IUsuarioRepository;
 import com.trust.ayzis.ayzis.model.Usuario;
+import com.trust.ayzis.ayzis.repository.IUsuarioRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -30,10 +30,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
-import com.trust.ayzis.ayzis.model.IVendaRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
 import com.trust.ayzis.ayzis.model.Venda;
+import com.trust.ayzis.ayzis.repository.IVendaRepository;
 import com.trust.ayzis.ayzis.service.IProdutoService;
 import com.trust.ayzis.ayzis.service.IVendaService;
 

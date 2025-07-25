@@ -4,8 +4,9 @@ import com.trust.ayzis.ayzis.dto.AuthResponseDTO;
 import com.trust.ayzis.ayzis.dto.LoginRequestDTO;
 import com.trust.ayzis.ayzis.dto.RegisterRequestDTO;
 import com.trust.ayzis.ayzis.dto.UsuarioResponseDTO;
-import com.trust.ayzis.ayzis.model.IUsuarioRepository;
 import com.trust.ayzis.ayzis.model.Usuario;
+import com.trust.ayzis.ayzis.repository.IUsuarioRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
 import com.trust.ayzis.ayzis.model.Componentes;
-import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
 import com.trust.ayzis.ayzis.model.Resposta;
+import com.trust.ayzis.ayzis.repository.IProdutoRepository;
 import com.trust.ayzis.ayzis.service.IComponentesService;
 import com.trust.ayzis.ayzis.service.IProdutoService;
 

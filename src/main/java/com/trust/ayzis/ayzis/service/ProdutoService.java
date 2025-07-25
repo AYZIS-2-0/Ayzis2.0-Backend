@@ -13,8 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.trust.ayzis.ayzis.exception.ExceptionLogger;
-import com.trust.ayzis.ayzis.model.IProdutoRepository;
 import com.trust.ayzis.ayzis.model.Produto;
+import com.trust.ayzis.ayzis.repository.IProdutoRepository;
 
 @Service
 public class ProdutoService implements IProdutoService {

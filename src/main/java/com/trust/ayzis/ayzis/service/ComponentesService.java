@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.trust.ayzis.ayzis.model.Componentes;
-import com.trust.ayzis.ayzis.model.IComponentesRepository;
 import com.trust.ayzis.ayzis.model.Produto;
+import com.trust.ayzis.ayzis.repository.IComponentesRepository;
 
 @Service
 public class ComponentesService implements IComponentesService {
